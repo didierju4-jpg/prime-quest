@@ -1,0 +1,9 @@
+{
+  "name": "PRIME QUEST",
+  "short_name": "PRIME QUEST",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#101522",
+  "description": "Tu vida. Tu progreso. Tus 90 días."
+}
