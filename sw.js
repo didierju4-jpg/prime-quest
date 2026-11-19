@@ -1,1 +1,5 @@
-const C='mi-prime-v3';const F=['./','./index.html','./manifest.json'];self.addEventListener('install',e=>e.waitUntil((async()=>{let c=await caches.open(C);await c.addAll(F);await self.skipWaiting()})()));self.addEventListener('activate',e=>e.waitUntil((async()=>{for(let k of await caches.keys())if(k!==C)await caches.delete(k);await self.clients.claim()})()));self.addEventListener('fetch',e=>{if(e.request.method==='GET')e.respondWith(fetch(e.request).then(r=>{if(r.ok)caches.open(C).then(c=>c.put(e.request,r.clone()));return r}).catch(()=>caches.match(e.request)))})
+const C='mi-prime-v4';
+const F=['./','./index.html','./manifest.json'];
+self.addEventListener('install',e=>e.waitUntil((async()=>{const c=await caches.open(C);await c.addAll(F);await self.skipWaiting()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==C)await caches.delete(k);await self.clients.claim()})()));
+self.addEventListener('fetch',e=>{if(e.request.method==='GET')e.respondWith(fetch(e.request).then(r=>{if(r.ok)caches.open(C).then(c=>c.put(e.request,r.clone()));return r}).catch(()=>caches.match(e.request)))});
