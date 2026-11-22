@@ -204,17 +204,24 @@ input[type=radio]{width:auto;margin:0 8px 0 0}
  </div>
 
  <div class="card">
-  <h2>Mis deudas y obligaciones</h2>
-  <p class="notice">Registra tus deudas, consulta cuánto debes y descuenta cada abono.</p>
-  <label>Nombre de la deuda</label>
-  <input id="debtName" placeholder="Ej. Crédito, préstamo, tarjeta...">
-  <div class="form-grid">
-   <div><label>Valor total</label><input id="debtAmount" type="number" min="1" placeholder="1000000"></div>
-   <div><label>Abono inicial (opcional)</label><input id="debtPaid" type="number" min="0" placeholder="0"></div>
-  </div>
+  <h2>Gestión de deudas y obligaciones</h2>
+  <p class="notice">Administra capital, intereses, fechas de pago y vencimientos.</p>
+  <label>Nombre de la deuda / acreedor</label><input id="debtName" placeholder="Ej. Préstamo personal">
+  <div class="form-grid"><div><label>Capital inicial (COP)</label><input id="debtAmount" type="number" min="1" placeholder="1000000"></div><div><label>Abono inicial al capital (COP)</label><input id="debtPaid" type="number" min="0" value="0"></div></div>
+  <div class="form-grid"><div><label>Tasa de interés mensual (%)</label><input id="debtInterestRate" type="number" min="0" step="0.01" placeholder="3"></div><div><label>Día de pago de intereses (1–31)</label><input id="debtInterestDay" type="number" min="1" max="31" placeholder="5"></div></div>
+  <div class="form-grid"><div><label>Fecha del préstamo</label><input id="debtStartDate" type="date"></div><div><label>Fecha límite de pago total</label><input id="debtDueDate" type="date"></div></div>
+  <label>Descripción / condiciones</label><textarea id="debtNotes" rows="2" placeholder="Condiciones, acuerdos o notas sobre la deuda"></textarea>
+  <div id="debtInterestPreview" class="money-card small">El interés mensual estimado aparecerá aquí.</div>
   <button onclick="addDebt()">Registrar deuda</button>
-  <div id="debtList" class="notice" style="margin-top:12px">No tienes deudas registradas.</div>
  </div>
+ <div class="card"><h2>Resumen de obligaciones</h2><div class="money-grid">
+  <div class="money-card"><div class="small muted">CAPITAL PENDIENTE</div><div class="money orange" id="debtCapitalTotal">$0</div></div>
+  <div class="money-card"><div class="small muted">INTERESES MENSUALES</div><div class="money red" id="debtInterestMonthlyTotal">$0</div></div>
+  <div class="money-card"><div class="small muted">INTERESES ESTE MES PENDIENTES</div><div class="money" id="debtInterestDueTotal">$0</div></div>
+  <div class="money-card"><div class="small muted">DEUDAS ACTIVAS</div><div class="money" id="debtActiveCount">0</div></div>
+ </div></div>
+ <div class="card"><h2>Próximos pagos y vencimientos</h2><div id="debtUpcomingPayments" class="notice">No hay pagos próximos registrados.</div></div>
+ <div class="card"><h2>Listado de deudas</h2><div id="debtList" class="notice">No tienes deudas registradas.</div></div>
 
  <div class="card">
   <h2>Mis metas de ahorro</h2>
@@ -582,36 +589,30 @@ function deleteMovement(id){
  if(!confirm("¿Eliminar este movimiento?"))return;
  data.finance.movements=data.finance.movements.filter(x=>x.id!==id);save();renderFinance();
 }
+function debtInterest(d){return Math.round(Number(d.remaining||0)*Number(d.interestRate||0)/100);}
+function debtDate(year,monthIndex,day){const last=new Date(year,monthIndex+1,0).getDate();return localDate(new Date(year,monthIndex,Math.min(Math.max(1,Number(day)||1),last)));}
+function debtInterestDueDate(d){const t=today(),[y,m]=t.split("-").map(Number);return debtDate(y,m-1,d.interestDay||1);}
+function interestPaidThisMonth(d,month=today().slice(0,7)){return (d.interestPayments||[]).some(p=>p.month===month);}
+function interestStatus(d){if(!d.interestRate)return "Sin intereses";if(interestPaidThisMonth(d))return "Interés del mes pagado";const due=debtInterestDueDate(d);return due<today()?"Interés vencido":due===today()?"Interés vence hoy":"Interés pendiente";}
 function addDebt(){
- const name=document.getElementById("debtName").value.trim();
- const amount=Number(document.getElementById("debtAmount").value);
- const paid=Number(document.getElementById("debtPaid").value||0);
- if(!name||amount<=0||paid<0||paid>amount){alert("Revisa el nombre y los valores de la deuda.");return;}
- data.finance.debts.push({id:crypto.randomUUID(),name,total:amount,paid,remaining:amount-paid});
- document.getElementById("debtName").value="";document.getElementById("debtAmount").value="";document.getElementById("debtPaid").value="";document.getElementById("debtDueDate").value="";
- save();renderFinance();
+ const name=document.getElementById("debtName").value.trim(),amount=Number(document.getElementById("debtAmount").value),paid=Number(document.getElementById("debtPaid").value||0),rate=Number(document.getElementById("debtInterestRate").value||0),day=Number(document.getElementById("debtInterestDay").value||1),startDate=document.getElementById("debtStartDate").value||today(),dueDate=document.getElementById("debtDueDate").value,notes=document.getElementById("debtNotes").value.trim();
+ if(!name||!Number.isFinite(amount)||amount<=0||paid<0||paid>amount||rate<0||day<1||day>31){alert("Revisa el nombre, capital, abono, tasa y día de pago.");return;}
+ data.finance.debts.push({id:crypto.randomUUID(),name,total:amount,paid,remaining:amount-paid,interestRate:rate,interestDay:day,startDate,dueDate,notes,interestPayments:[],capitalPayments:[],createdAt:today()});
+ ["debtName","debtAmount","debtPaid","debtInterestRate","debtInterestDay","debtDueDate","debtNotes"].forEach(id=>document.getElementById(id).value="");document.getElementById("debtStartDate").value=today();save();renderFinance();updateDebtInterestPreview();
 }
+function payDebtCapital(id){const d=data.finance.debts.find(x=>x.id===id),input=document.getElementById("capitalPay-"+id),amount=Number(input?.value);if(!d||amount<=0||amount>d.remaining){alert("El abono debe ser mayor que cero y no superar el capital pendiente.");return;}d.paid=Number(d.paid||0)+amount;d.remaining=Math.max(0,Number(d.remaining||0)-amount);d.capitalPayments=d.capitalPayments||[];d.capitalPayments.push({id:crypto.randomUUID(),amount,date:today()});save();renderFinance();}
+function payDebtInterest(id){const d=data.finance.debts.find(x=>x.id===id);if(!d)return;const amount=debtInterest(d),month=today().slice(0,7);if(amount<=0){alert("Esta deuda no tiene interés mensual pendiente.");return;}if(interestPaidThisMonth(d,month)){alert("El interés de este mes ya está registrado como pagado.");return;}if(!confirm("¿Registrar el pago de intereses por "+money(amount)+" de "+d.name+"?"))return;d.interestPayments=d.interestPayments||[];d.interestPayments.push({id:crypto.randomUUID(),amount,date:today(),month});data.finance.movements.push({id:crypto.randomUUID(),type:"expense",description:"Intereses: "+d.name,amount,date:today(),category:"Otros"});save();renderFinance();}
+function deleteDebt(id){if(!confirm("¿Eliminar esta deuda y su historial de pagos?"))return;data.finance.debts=data.finance.debts.filter(x=>x.id!==id);save();renderFinance();}
 function renderDebts(){
- const el=document.getElementById("debtList");
- el.innerHTML=data.finance.debts.length?data.finance.debts.map(d=>`
-  <div class="list-item">
-   <div class="row"><strong>${escapeHTML(d.name)}</strong><strong class="orange">${money(d.remaining)}</strong></div>
-   <div class="small muted">Total: ${money(d.total)} · Abonado: ${money(d.paid)}</div>
-    ${d.dueDate?`<div class="small ${d.dueDate<today()&&d.remaining>0?"red":d.dueDate===today()?"orange":"muted"}">Fecha límite: ${d.dueDate} · ${d.remaining<=0?"Pagada":d.dueDate<today()?"VENCIDA":d.dueDate===today()?"Vence hoy":"Pendiente"}</div>`:"<div class='small muted'>Sin fecha límite registrada</div>"}
-   <div class="progress"><span style="width:${d.total?d.paid/d.total*100:0}%"></span></div>
-   <div class="form-grid"><input type="number" min="1" id="pay-${d.id}" placeholder="Valor del abono"><button onclick="payDebt('${d.id}')">Registrar abono</button></div>
-   <button class="secondary" onclick="deleteDebt('${d.id}')">Eliminar deuda</button>
-  </div>`).join(""):"No tienes deudas registradas.";
+ const debts=data.finance.debts||[],el=document.getElementById("debtList");let capitalTotal=0,monthlyInterestTotal=0,interestDueTotal=0,activeCount=0;const upcoming=[];
+ debts.forEach(d=>{d.paid=Number(d.paid||0);d.remaining=Number(d.remaining??(Number(d.total||0)-d.paid));d.interestRate=Number(d.interestRate||0);d.interestDay=Number(d.interestDay||1);d.interestPayments=d.interestPayments||[];d.capitalPayments=d.capitalPayments||[];d.notes=d.notes||"";if(d.remaining>0){capitalTotal+=d.remaining;activeCount++;monthlyInterestTotal+=debtInterest(d);if(d.interestRate&&!interestPaidThisMonth(d)){interestDueTotal+=debtInterest(d);upcoming.push({date:debtInterestDueDate(d),name:d.name,type:"Interés mensual",amount:debtInterest(d),id:d.id});}if(d.dueDate&&d.remaining>0)upcoming.push({date:d.dueDate,name:d.name,type:"Fecha límite de capital",amount:d.remaining,id:d.id});}});
+ document.getElementById("debtCapitalTotal").textContent=money(capitalTotal);document.getElementById("debtInterestMonthlyTotal").textContent=money(monthlyInterestTotal);document.getElementById("debtInterestDueTotal").textContent=money(interestDueTotal);document.getElementById("debtActiveCount").textContent=activeCount;
+ upcoming.sort((a,b)=>a.date.localeCompare(b.date));const up=document.getElementById("debtUpcomingPayments");up.innerHTML=upcoming.length?upcoming.slice(0,12).map(x=>`<div class="list-item"><div class="row"><strong>${escapeHTML(x.name)} · ${escapeHTML(x.type)}</strong><strong>${money(x.amount)}</strong></div><div class="small ${x.date<today()?"red":x.date===today()?"orange":"muted"}">${x.date} · ${x.date<today()?"VENCIDO":x.date===today()?"VENCE HOY":"Próximo"}</div></div>`).join(""):"No hay pagos pendientes próximos.";
+ el.innerHTML=debts.length?debts.map(d=>{const i=debtInterest(d),due=d.dueDate||"",status=due&&d.remaining>0?(due<today()?"VENCIDA":due===today()?"VENCE HOY":"Pendiente"):d.remaining<=0?"Pagada":"Sin fecha límite";return `<div class="list-item"><div class="row"><strong>${escapeHTML(d.name)}</strong><strong class="orange">${money(d.remaining)}</strong></div><div class="small muted">Capital inicial: ${money(d.total)} · Capital abonado: ${money(d.paid)} · Capital pendiente: ${money(d.remaining)}</div><div class="small muted">Interés: ${d.interestRate}% mensual · ${money(i)} al mes · Día de pago: ${d.interestDay}</div><div class="small ${due&&d.remaining>0&&due<today()?"red":due===today()?"orange":"muted"}">${due?`Fecha límite: ${due} · ${status}`:"Sin fecha límite registrada"}</div><div class="small ${interestStatus(d)==="Interés vencido"?"red":interestStatus(d)==="Interés vence hoy"?"orange":"muted"}">${interestStatus(d)}${d.interestRate?` · Fecha de pago mensual: ${debtInterestDueDate(d)}`:""}</div><div class="progress"><span style="width:${d.total?Math.min(100,d.paid/d.total*100):0}%"></span></div><div class="form-grid"><input type="number" min="1" id="capitalPay-${d.id}" placeholder="Abono a capital"><button onclick="payDebtCapital('${d.id}')">Abonar capital</button></div>${d.interestRate?`<button class="secondary" onclick="payDebtInterest('${d.id}')">Registrar pago de interés (${money(i)})</button>`:""}<div class="small muted" style="margin-top:8px">${escapeHTML(d.notes||"")}</div><details><summary class="small">Historial de pagos</summary><div class="small muted">${(d.capitalPayments||[]).length?d.capitalPayments.map(p=>`${p.date} · Abono a capital ${money(p.amount)}`).join("<br>"):"Sin abonos de capital registrados."}<br>${(d.interestPayments||[]).length?d.interestPayments.map(p=>`${p.date} · Interés pagado ${money(p.amount)} (${p.month})`).join("<br>"):"Sin pagos de intereses registrados."}</div></details><button class="secondary" onclick="deleteDebt('${d.id}')">Eliminar deuda</button></div>`}).join(""):"No tienes deudas registradas.";
 }
-function payDebt(id){
- const d=data.finance.debts.find(x=>x.id===id),input=document.getElementById("pay-"+id),amount=Number(input.value);
- if(!d||amount<=0||amount>d.remaining){alert("El abono debe ser mayor que cero y no superar la deuda pendiente.");return;}
- d.paid+=amount;d.remaining-=amount;save();renderFinance();
-}
-function deleteDebt(id){
- if(!confirm("¿Eliminar esta deuda?"))return;
- data.finance.debts=data.finance.debts.filter(x=>x.id!==id);save();renderFinance();
-}
+function updateDebtInterestPreview(){const amount=Number(document.getElementById("debtAmount")?.value||0),paid=Number(document.getElementById("debtPaid")?.value||0),rate=Number(document.getElementById("debtInterestRate")?.value||0),capital=Math.max(0,amount-paid),interest=Math.round(capital*rate/100),el=document.getElementById("debtInterestPreview");if(el)el.innerHTML=`Capital pendiente estimado: <strong>${money(capital)}</strong><br>Interés mensual estimado: <strong>${money(interest)}</strong><br>Total mensual estimado (capital + interés): <strong>${money(capital+interest)}</strong>`;}
+["debtAmount","debtPaid","debtInterestRate"].forEach(id=>document.getElementById(id)?.addEventListener("input",updateDebtInterestPreview));
+function payDebt(id){payDebtCapital(id);}
 function addGoal(){
  const name=document.getElementById("goalName").value.trim();
  const target=Number(document.getElementById("goalTarget").value);
@@ -795,6 +796,8 @@ function render(){
 document.getElementById("financeMonth").value=today().slice(0,7);
 document.getElementById("financeMonth").addEventListener("change",renderFinance);
 document.getElementById("movementDate").value=today();
+if(document.getElementById("debtStartDate"))document.getElementById("debtStartDate").value=today();
+updateDebtInterestPreview();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
 render();updateEvaluation();
 if(!data.profile?.registered)document.getElementById("onboarding").classList.remove("hidden");
