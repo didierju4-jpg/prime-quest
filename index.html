@@ -64,9 +64,41 @@ nav button.active{background:var(--panel2);color:white}
 .big{font-size:38px;font-weight:850}
 .hidden{display:none!important}
 @media(min-width:650px){main{padding-top:20px}.money-grid{grid-template-columns:repeat(4,1fr)}}
+
+nav{justify-content:flex-start;overflow-x:auto;scrollbar-width:thin}
+nav button{flex:0 0 82px;max-width:none;white-space:nowrap}
+input[type=radio]{width:auto;margin:0 8px 0 0}
+.radio-line{display:flex;align-items:center;gap:8px;padding:9px;background:var(--panel2);border-radius:10px;margin:6px 0}
+.onboarding{position:fixed;inset:0;z-index:30;background:#080d1aee;display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}
+.onboarding .card{width:min(520px,100%);max-height:95vh;overflow:auto;margin:auto}
+.metric-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.meal-entry{padding:12px 0;border-bottom:1px solid var(--border)}
+.small-btn{padding:7px 10px;font-size:12px}
+@media(max-width:430px){nav button{flex-basis:76px}}
+
 </style>
 </head>
 <body>
+
+<div id="onboarding" class="onboarding hidden">
+ <div class="card">
+  <div class="brand">BIENVENIDO A TU EVOLUCIÓN</div><h2>Configura PRIME QUEST</h2>
+  <p class="notice">Este registro configura tu experiencia. Podrás cambiarlo después en Ajustes.</p>
+  <label>¿Cómo te identificas?</label>
+  <div class="radio-line"><input type="radio" name="profileGender" value="masculino" checked><span>Masculino</span></div>
+  <div class="radio-line"><input type="radio" name="profileGender" value="femenino"><span>Femenino</span></div>
+  <div class="radio-line"><input type="radio" name="profileGender" value="otro"><span>Otra identidad</span></div>
+  <div class="radio-line"><input type="radio" name="profileGender" value="no-decir"><span>Prefiero no decirlo</span></div>
+  <label>Nombre o apodo (opcional)</label><input id="profileName" placeholder="¿Cómo quieres que te llamemos?">
+  <label>Objetivo principal</label>
+  <select id="profileGoal"><option value="integral">Transformación integral</option><option value="salud">Mejorar salud y hábitos</option><option value="musculo">Ganar masa muscular</option><option value="grasa">Perder grasa corporal</option><option value="imagen">Mejorar imagen y cuidado personal</option></select>
+  <label>¿Activar seguimiento menstrual? (opcional)</label>
+  <select id="cycleEnabled"><option value="no">No por ahora</option><option value="si">Sí, quiero registrarlo</option></select>
+  <p class="notice">Ninguna función queda bloqueada por el género. Maquillaje, ciclo menstrual y rutinas específicas son opcionales.</p>
+  <button onclick="finishOnboarding()">Comenzar mi PRIME QUEST</button>
+ </div>
+</div>
+
 
 <header>
  <div class="brand">YOUR PERSONAL EVOLUTION SYSTEM</div>
@@ -194,6 +226,50 @@ nav button.active{background:var(--panel2);color:white}
   </div>
   <button onclick="addGoal()">Crear meta</button>
   <div id="goalList" style="margin-top:12px"></div>
+ </div>
+</section>
+
+
+<!-- NUTRICIÓN Y EVOLUCIÓN FÍSICA -->
+<section id="nutricion" class="page">
+ <div class="card">
+  <div class="brand">ALIMENTACIÓN Y PROGRESO</div><h2>Mi nutrición</h2>
+  <p class="notice">Registra alimentos, cantidades y horarios. Las calorías y macronutrientes son estimaciones orientativas, no mediciones exactas.</p>
+  <label>Fecha del registro</label><input type="date" id="nutritionDate">
+ </div>
+ <div class="stats">
+  <div class="stat"><strong id="kcalToday">0</strong><span>CALORÍAS ESTIMADAS</span></div>
+  <div class="stat"><strong id="proteinToday">0 g</strong><span>PROTEÍNA</span></div>
+  <div class="stat"><strong id="carbsToday">0 g</strong><span>CARBOHIDRATOS</span></div>
+  <div class="stat"><strong id="fatToday">0 g</strong><span>GRASAS</span></div>
+ </div>
+ <div class="card">
+  <h2>Registrar alimento</h2>
+  <label>Comida</label><select id="mealType"><option>Desayuno</option><option>Media mañana</option><option>Almuerzo</option><option>Once</option><option>Merienda</option><option>Cena</option><option>Otro</option></select>
+  <div class="form-grid"><div><label>Hora</label><input type="time" id="mealTime"></div><div><label>Cantidad</label><input type="number" id="foodAmount" min="0.1" step="0.1" value="100"></div></div>
+  <label>Unidad</label><select id="foodUnit"><option value="g">Gramos</option><option value="ml">Mililitros</option><option value="unidad">Unidad</option><option value="porcion">Porción</option></select>
+  <label>¿Qué comiste?</label><input id="foodName" placeholder="Ej. huevo, arroz cocido, banano, leche...">
+  <label>Calorías estimadas (opcional)</label><input type="number" id="foodKcal" min="0" placeholder="Si conoces las calorías, escríbelas aquí">
+  <p class="notice">La estimación automática reconoce algunos alimentos frecuentes. Para recetas, preparaciones mixtas o alimentos no reconocidos, introduce las calorías de una etiqueta o fuente nutricional.</p>
+  <button onclick="addFood()">Guardar alimento</button>
+ </div>
+ <div class="card"><div class="row"><h2>Registro del día</h2><span class="tag" id="foodCount">0 alimentos</span></div><div id="foodList" class="notice">Todavía no hay registros.</div></div>
+ <div class="card"><h2>Análisis de alimentación</h2><div id="nutritionSummary" class="notice">Registra tus comidas para comenzar.</div><button class="secondary" onclick="copyFoodDay()">Copiar resumen para analizar</button></div>
+ <div class="card">
+  <h2>Peso y medidas corporales</h2>
+  <p class="notice">Registro opcional. Comparar mediciones semanales suele ser más útil que interpretar variaciones diarias.</p>
+  <div class="form-grid"><div><label>Peso (kg)</label><input id="bodyWeight" type="number" min="1" step="0.1" placeholder="Ej. 68.5"></div><div><label>Fecha</label><input id="bodyDate" type="date"></div>
+  <div><label>Cintura (cm)</label><input id="bodyWaist" type="number" min="0" step="0.1"></div><div><label>Abdomen (cm)</label><input id="bodyAbdomen" type="number" min="0" step="0.1"></div>
+  <div><label>Pecho (cm)</label><input id="bodyChest" type="number" min="0" step="0.1"></div><div><label>Cadera (cm)</label><input id="bodyHip" type="number" min="0" step="0.1"></div>
+  <div><label>Brazo (cm)</label><input id="bodyArm" type="number" min="0" step="0.1"></div><div><label>Pierna (cm)</label><input id="bodyLeg" type="number" min="0" step="0.1"></div></div>
+  <label>Notas (opcional)</label><textarea id="bodyNote" rows="2"></textarea><button onclick="saveBodyMetric()">Guardar medición</button><div id="bodyHistory" class="notice" style="margin-top:12px"></div>
+ </div>
+ <div class="card">
+  <h2>Seguimiento menstrual (opcional)</h2>
+  <p class="notice">No predice con certeza la menstruación ni la ovulación y no sustituye orientación médica.</p>
+  <label>Fecha de inicio del periodo</label><input type="date" id="periodDate">
+  <label>Síntomas o notas (opcional)</label><textarea id="periodNote" rows="2"></textarea>
+  <button class="secondary" onclick="savePeriod()">Guardar registro menstrual</button><div id="periodHistory" class="notice" style="margin-top:10px"></div>
  </div>
 </section>
 
@@ -358,9 +434,15 @@ const blocks=[
 
 const initial={
  startDate:localDate(),availableTime:120,days:{},finance:{movements:[],debts:[],goals:[]},
- dimensions:{},evaluations:[],missions:{},noScrollSessions:0
+ dimensions:{},evaluations:[],missions:{},noScrollSessions:0,
+ profile:{registered:false,gender:"masculino",name:"",goal:"integral",cycleEnabled:false},
+ nutrition:{foods:[],bodyMetrics:[],periods:[]}
 };
 let data=load();
+data.profile=data.profile||{registered:true,gender:"masculino",name:"",goal:"integral",cycleEnabled:false};
+data.nutrition=data.nutrition||{foods:[],bodyMetrics:[],periods:[]};
+data.finance=data.finance||{movements:[],debts:[],goals:[]};
+data.finance.movements=data.finance.movements||[];data.finance.debts=data.finance.debts||[];data.finance.goals=data.finance.goals||[];
 let scrollIndex=0,scrollActive=false,scrollTimer=null;
 
 function localDate(d=new Date()){
@@ -462,7 +544,7 @@ function showPage(id,btn){
  document.getElementById(id).classList.add("active");
  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
  btn.classList.add("active");
- if(id==="finanzas")renderFinance();
+ if(id==="finanzas")renderFinance();if(id==="nutricion")renderNutrition();
 }
 function money(n){return new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",maximumFractionDigits:0}).format(n||0);}
 function selectedMonth(){return document.getElementById("financeMonth").value||today().slice(0,7);}
@@ -506,7 +588,7 @@ function addDebt(){
  const paid=Number(document.getElementById("debtPaid").value||0);
  if(!name||amount<=0||paid<0||paid>amount){alert("Revisa el nombre y los valores de la deuda.");return;}
  data.finance.debts.push({id:crypto.randomUUID(),name,total:amount,paid,remaining:amount-paid});
- document.getElementById("debtName").value="";document.getElementById("debtAmount").value="";document.getElementById("debtPaid").value="";
+ document.getElementById("debtName").value="";document.getElementById("debtAmount").value="";document.getElementById("debtPaid").value="";document.getElementById("debtDueDate").value="";
  save();renderFinance();
 }
 function renderDebts(){
@@ -515,6 +597,7 @@ function renderDebts(){
   <div class="list-item">
    <div class="row"><strong>${escapeHTML(d.name)}</strong><strong class="orange">${money(d.remaining)}</strong></div>
    <div class="small muted">Total: ${money(d.total)} · Abonado: ${money(d.paid)}</div>
+    ${d.dueDate?`<div class="small ${d.dueDate<today()&&d.remaining>0?"red":d.dueDate===today()?"orange":"muted"}">Fecha límite: ${d.dueDate} · ${d.remaining<=0?"Pagada":d.dueDate<today()?"VENCIDA":d.dueDate===today()?"Vence hoy":"Pendiente"}</div>`:"<div class='small muted'>Sin fecha límite registrada</div>"}
    <div class="progress"><span style="width:${d.total?d.paid/d.total*100:0}%"></span></div>
    <div class="form-grid"><input type="number" min="1" id="pay-${d.id}" placeholder="Valor del abono"><button onclick="payDebt('${d.id}')">Registrar abono</button></div>
    <button class="secondary" onclick="deleteDebt('${d.id}')">Eliminar deuda</button>
@@ -610,10 +693,100 @@ function exportData(){
 }
 function importData(){
  const f=document.getElementById("importFile").files[0];if(!f){alert("Selecciona un archivo.");return;}
- const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.startDate||!x.finance||!x.days)throw Error();if(!confirm("¿Reemplazar tus datos actuales?"))return;data={...structuredClone(initial),...x};save();render();alert("Copia restaurada.");}catch(e){alert("Archivo no válido.");}};r.readAsText(f);
+ const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.startDate||!x.finance||!x.days)throw Error();if(!confirm("¿Reemplazar tus datos actuales?"))return;data={...structuredClone(initial),...x};
+data.profile=data.profile||{registered:true,gender:"masculino",name:"",goal:"integral",cycleEnabled:false};
+data.nutrition=data.nutrition||{foods:[],bodyMetrics:[],periods:[]};
+data.finance=data.finance||{movements:[],debts:[],goals:[]};
+data.finance.movements=data.finance.movements||[];data.finance.debts=data.finance.debts||[];data.finance.goals=data.finance.goals||[];
+save();render();alert("Copia restaurada.");}catch(e){alert("Archivo no válido.");}};r.readAsText(f);
 }
 function resetData(){if(!confirm("¿Borrar todo tu progreso y tus datos financieros?"))return;if(!confirm("Esta acción no se puede deshacer. ¿Continuar?"))return;localStorage.removeItem(KEY);data=structuredClone(initial);save();render();}
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
+function finishOnboarding(){
+ const gender=document.querySelector('input[name="profileGender"]:checked')?.value||"masculino";
+ data.profile={registered:true,gender,name:document.getElementById("profileName").value.trim(),goal:document.getElementById("profileGoal").value,cycleEnabled:document.getElementById("cycleEnabled").value==="si"};
+ save();document.getElementById("onboarding").classList.add("hidden");renderProfileFields();
+}
+function saveProfile(){
+ data.profile={...data.profile,registered:true,gender:document.getElementById("settingsGender").value,name:document.getElementById("settingsName").value.trim(),goal:document.getElementById("settingsGoal").value,cycleEnabled:document.getElementById("settingsCycle").value==="si"};
+ save();alert("Perfil actualizado.");
+}
+function renderProfileFields(){
+ const p=data.profile||{};
+ const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
+ set("settingsGender",p.gender||"masculino");set("settingsName",p.name||"");set("settingsGoal",p.goal||"integral");set("settingsCycle",p.cycleEnabled?"si":"no");
+}
+const foodDB={
+ "huevo":{k:143,p:13,c:1,f:10},"arroz cocido":{k:130,p:2.7,c:28,f:.3},"arepa":{k:220,p:5,c:45,f:2},
+ "banano":{k:89,p:1.1,c:23,f:.3},"platano":{k:122,p:1.3,c:32,f:.4},"pollo":{k:165,p:31,c:0,f:3.6},
+ "carne de res":{k:250,p:26,c:0,f:15},"papa cocida":{k:87,p:1.9,c:20,f:.1},"avena":{k:389,p:17,c:66,f:7},
+ "leche":{k:61,p:3.2,c:4.8,f:3.3},"yogur":{k:60,p:3.5,c:7,f:2},"pan":{k:265,p:9,c:49,f:3.2},
+ "queso":{k:350,p:22,c:2,f:28},"aguacate":{k:160,p:2,c:9,f:15},"manzana":{k:52,p:.3,c:14,f:.2},
+ "naranja":{k:47,p:.9,c:12,f:.1},"lentejas":{k:116,p:9,c:20,f:.4},"frijoles":{k:127,p:8.7,c:22,f:.5},
+ "pasta cocida":{k:158,p:5.8,c:31,f:.9},"atun":{k:116,p:26,c:0,f:1},"mani":{k:567,p:26,c:16,f:49},
+ "aceite":{k:884,p:0,c:0,f:100}
+};
+function estimateFood(name,amount,unit,manual){
+ if(manual!==""&&Number.isFinite(Number(manual)))return {k:Number(manual),p:0,c:0,f:0,source:"calorías indicadas manualmente"};
+ const key=String(name).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
+ const found=Object.keys(foodDB).find(k=>key.includes(k));
+ if(!found)return {k:0,p:0,c:0,f:0,source:"sin estimación automática; añade calorías manualmente"};
+ const factor=(unit==="g"||unit==="ml")?amount/100:amount,d=foodDB[found];
+ return {k:Math.round(d.k*factor),p:+(d.p*factor).toFixed(1),c:+(d.c*factor).toFixed(1),f:+(d.f*factor).toFixed(1),source:"estimación orientativa"};
+}
+function addFood(){
+ const date=document.getElementById("nutritionDate").value||today(),meal=document.getElementById("mealType").value,time=document.getElementById("mealTime").value||"12:00";
+ const name=document.getElementById("foodName").value.trim(),amount=Number(document.getElementById("foodAmount").value),unit=document.getElementById("foodUnit").value,manual=document.getElementById("foodKcal").value;
+ if(!name||!Number.isFinite(amount)||amount<=0){alert("Escribe el alimento y una cantidad válida.");return;}
+ const est=estimateFood(name,amount,unit,manual);
+ data.nutrition.foods.push({id:crypto.randomUUID(),date,meal,time,name,amount,unit,...est});
+ document.getElementById("foodName").value="";document.getElementById("foodKcal").value="";save();renderNutrition();
+}
+function deleteFood(id){if(!confirm("¿Eliminar este alimento?"))return;data.nutrition.foods=data.nutrition.foods.filter(x=>x.id!==id);save();renderNutrition();}
+function renderNutrition(){
+ data.nutrition=data.nutrition||{foods:[],bodyMetrics:[],periods:[]};
+ const date=document.getElementById("nutritionDate").value||today(),items=data.nutrition.foods.filter(x=>x.date===date).sort((a,b)=>a.time.localeCompare(b.time));
+ const total=items.reduce((s,x)=>({k:s.k+(x.k||0),p:s.p+(x.p||0),c:s.c+(x.c||0),f:s.f+(x.f||0)}),{k:0,p:0,c:0,f:0});
+ document.getElementById("kcalToday").textContent=Math.round(total.k);
+ document.getElementById("proteinToday").textContent=total.p.toFixed(1)+" g";document.getElementById("carbsToday").textContent=total.c.toFixed(1)+" g";document.getElementById("fatToday").textContent=total.f.toFixed(1)+" g";
+ document.getElementById("foodCount").textContent=items.length+" alimentos";
+ const meals=[...new Set(items.map(x=>x.meal))];
+ document.getElementById("foodList").innerHTML=items.length?meals.map(m=>`<h3 style="margin-top:14px">${escapeHTML(m)}</h3>`+items.filter(x=>x.meal===m).map(x=>`
+  <div class="meal-entry"><div class="row"><strong>${escapeHTML(x.name)}</strong><span class="small muted">${x.time}</span></div>
+  <div class="row"><span class="small muted">${x.amount} ${x.unit} · ${escapeHTML(x.source||"")}</span><strong>${x.k||0} kcal</strong></div>
+  <div class="small muted">Proteína ${x.p||0} g · Carbohidratos ${x.c||0} g · Grasas ${x.f||0} g</div><button class="secondary small-btn" onclick="deleteFood('${x.id}')">Eliminar</button></div>`).join("")).join(""):"Todavía no has registrado alimentos para esta fecha.";
+ const past=Array.from({length:7},(_,i)=>{const d=new Date(date+"T12:00:00");d.setDate(d.getDate()-i);return localDate(d);}).map(d=>({date:d,k:data.nutrition.foods.filter(x=>x.date===d).reduce((s,x)=>s+(x.k||0),0)})).filter(x=>x.k>0);
+ document.getElementById("nutritionSummary").innerHTML=past.length?`Promedio de los días con registros en los últimos 7 días: <strong>${Math.round(past.reduce((s,x)=>s+x.k,0)/past.length)} kcal/día</strong>. Hay ${past.length} día(s) registrados. Es una estimación incompleta si faltan comidas o cantidades.`:"Registra tus comidas para comenzar a ver tendencias.";
+ renderBodyMetrics();renderPeriods();
+}
+function copyFoodDay(){
+ const date=document.getElementById("nutritionDate").value||today(),items=data.nutrition.foods.filter(x=>x.date===date);
+ const out="Alimentación "+date+"\n"+items.map(x=>`${x.time} · ${x.meal}: ${x.amount} ${x.unit} ${x.name} (${x.k||0} kcal; P ${x.p||0} g; C ${x.c||0} g; G ${x.f||0} g)`).join("\n");
+ if(!items.length){alert("No hay alimentos registrados para esta fecha.");return;}
+ if(navigator.clipboard?.writeText)navigator.clipboard.writeText(out).then(()=>alert("Resumen copiado. Puedes pegarlo en ChatGPT para un análisis más detallado.")).catch(()=>alert(out));else alert(out);
+}
+function saveBodyMetric(){
+ const date=document.getElementById("bodyDate").value||today(),ids=["bodyWeight","bodyWaist","bodyAbdomen","bodyChest","bodyHip","bodyArm","bodyLeg"],vals=ids.map(id=>document.getElementById(id).value);
+ if(vals.every(v=>v==="")){alert("Registra al menos el peso o una medida.");return;}
+ const o={id:crypto.randomUUID(),date,note:document.getElementById("bodyNote").value.trim()};
+ ["weight","waist","abdomen","chest","hip","arm","leg"].forEach((k,i)=>o[k]=vals[i]===""?null:Number(vals[i]));
+ data.nutrition.bodyMetrics.push(o);save();ids.forEach(id=>document.getElementById(id).value="");document.getElementById("bodyNote").value="";renderBodyMetrics();
+}
+function renderBodyMetrics(){
+ const a=[...(data.nutrition.bodyMetrics||[])].sort((x,y)=>y.date.localeCompare(x.date));
+ document.getElementById("bodyHistory").innerHTML=a.length?a.slice(0,15).map(x=>`<div class="list-item"><strong>${x.date}</strong><div class="small muted">${x.weight!=null?"Peso "+x.weight+" kg · ":""}${x.waist!=null?"Cintura "+x.waist+" cm · ":""}${x.abdomen!=null?"Abdomen "+x.abdomen+" cm · ":""}${x.chest!=null?"Pecho "+x.chest+" cm · ":""}${x.hip!=null?"Cadera "+x.hip+" cm · ":""}${x.arm!=null?"Brazo "+x.arm+" cm · ":""}${x.leg!=null?"Pierna "+x.leg+" cm":""}</div>${escapeHTML(x.note||"")}</div>`).join(""):"Todavía no hay mediciones.";
+}
+function savePeriod(){
+ if(!data.profile?.cycleEnabled){alert("Activa el seguimiento menstrual en Ajustes si deseas utilizarlo.");return;}
+ const date=document.getElementById("periodDate").value;if(!date){alert("Selecciona la fecha de inicio.");return;}
+ data.nutrition.periods.push({id:crypto.randomUUID(),date,note:document.getElementById("periodNote").value.trim()});save();document.getElementById("periodNote").value="";renderPeriods();
+}
+function renderPeriods(){
+ const el=document.getElementById("periodHistory");if(!el)return;const a=[...(data.nutrition.periods||[])].sort((x,y)=>y.date.localeCompare(x.date));
+ el.innerHTML=a.length?a.slice(0,10).map(x=>`<div class="list-item"><strong>${x.date}</strong><div class="small muted">${escapeHTML(x.note||"Sin notas")}</div></div>`).join(""):"Sin registros menstruales.";
+}
+
 function render(){
  renderToday();renderDimensions();renderHistory();renderEvaluations();renderFinance();
  document.getElementById("startDate").value=data.startDate;
@@ -624,6 +797,9 @@ document.getElementById("financeMonth").addEventListener("change",renderFinance)
 document.getElementById("movementDate").value=today();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
 render();updateEvaluation();
+if(!data.profile?.registered)document.getElementById("onboarding").classList.remove("hidden");
+document.getElementById("nutritionDate").value=today();document.getElementById("bodyDate").value=today();
+document.getElementById("nutritionDate").addEventListener("change",renderNutrition);
 </script>
 </body>
 </html>
