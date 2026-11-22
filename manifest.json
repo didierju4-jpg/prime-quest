@@ -1,8 +1,13 @@
+
 {
-  "name": "MI PRIME — Tu mejor versión",
-  "short_name": "MI PRIME",
+  "name": "PRIME QUEST",
+  "short_name": "PRIME QUEST",
+  "description": "Tu vida convertida en un videojuego de evolución personal.",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#080d18",
-  "theme_color": "#080d18"
+  "orientation": "portrait",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "icons": []
 }
