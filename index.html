@@ -224,6 +224,23 @@ input[type=radio]{width:auto;margin:0 8px 0 0}
  <div class="card"><h2>Listado de deudas</h2><div id="debtList" class="notice">No tienes deudas registradas.</div></div>
 
  <div class="card">
+  <h2>Compromisos y pagos recurrentes</h2>
+  <p class="notice">Registra arriendo, recibos, servicios, cuotas y otros pagos. Los compromisos pendientes no desaparecen cuando vence su fecha.</p>
+  <label>Nombre del compromiso</label><input id="commitName" placeholder="Ej. Arriendo, recibo de luz, intereses">
+  <div class="form-grid"><div><label>Valor (COP)</label><input id="commitAmount" type="number" min="1" placeholder="400000"></div><div><label>Fecha de vencimiento</label><input id="commitDate" type="date"></div></div>
+  <div class="form-grid"><div><label>Frecuencia</label><select id="commitFrequency"><option value="once">Una sola vez</option><option value="weekly">Semanal</option><option value="biweekly">Quincenal</option><option value="monthly">Mensual</option></select></div><div><label>Categoría</label><select id="commitCategory"><option>Arriendo</option><option>Servicios</option><option>Intereses</option><option>Préstamo</option><option>Alimentación</option><option>Transporte</option><option>Otros</option></select></div></div>
+  <label>Deuda vinculada (opcional)</label><select id="commitDebt"><option value="">Sin vincular</option></select>
+  <label class="radio-line"><input type="checkbox" id="commitCapitalizable"> Si es interés vencido, permitir capitalizarlo a la deuda vinculada</label>
+  <label>Notas</label><textarea id="commitNotes" rows="2" placeholder="Detalles del acuerdo"></textarea>
+  <button onclick="addCommitment()">Crear compromiso</button>
+ </div>
+ <div class="card"><div class="row"><h2>Calendario de compromisos</h2></div>
+  <div class="form-grid"><button class="secondary" onclick="shiftCalendarMonth(-1)">← Mes anterior</button><button class="secondary" onclick="shiftCalendarMonth(1)">Mes siguiente →</button></div>
+  <label>Mes del calendario</label><input type="month" id="commitCalendarMonth">
+  <div id="commitCalendar" class="notice"></div><div id="calendarDayDetails" class="notice"></div>
+ </div>
+ <div class="card"><h2>Obligaciones pendientes y vencidas</h2><div id="commitmentList" class="notice">No tienes compromisos registrados.</div></div>
+ <div class="card">
   <h2>Mis metas de ahorro</h2>
   <label>Nombre de la meta</label>
   <input id="goalName" placeholder="Ej. Fondo de emergencia">
@@ -243,6 +260,7 @@ input[type=radio]{width:auto;margin:0 8px 0 0}
   <div class="brand">ALIMENTACIÓN Y PROGRESO</div><h2>Mi nutrición</h2>
   <p class="notice">Registra alimentos, cantidades y horarios. Las calorías y macronutrientes son estimaciones orientativas, no mediciones exactas.</p>
   <label>Fecha del registro</label><input type="date" id="nutritionDate">
+  <div class="form-grid"><div><label>Meta de calorías (opcional)</label><input type="number" id="nutritionCalorieTarget" min="0" placeholder="Ej. 2200"></div><div><label>Meta proteína (g, opcional)</label><input type="number" id="nutritionProteinTarget" min="0" placeholder="Ej. 120"></div></div>
  </div>
  <div class="stats">
   <div class="stat"><strong id="kcalToday">0</strong><span>CALORÍAS ESTIMADAS</span></div>
@@ -443,13 +461,13 @@ const initial={
  startDate:localDate(),availableTime:120,days:{},finance:{movements:[],debts:[],goals:[]},
  dimensions:{},evaluations:[],missions:{},noScrollSessions:0,
  profile:{registered:false,gender:"masculino",name:"",goal:"integral",cycleEnabled:false},
- nutrition:{foods:[],bodyMetrics:[],periods:[]}
+ nutrition:{foods:[],bodyMetrics:[],periods:[],targets:{calories:0,protein:0}}
 };
 let data=load();
 data.profile=data.profile||{registered:true,gender:"masculino",name:"",goal:"integral",cycleEnabled:false};
-data.nutrition=data.nutrition||{foods:[],bodyMetrics:[],periods:[]};
+data.nutrition=data.nutrition||{foods:[],bodyMetrics:[],periods:[],targets:{calories:0,protein:0}};data.nutrition.targets=data.nutrition.targets||{calories:0,protein:0};
 data.finance=data.finance||{movements:[],debts:[],goals:[]};
-data.finance.movements=data.finance.movements||[];data.finance.debts=data.finance.debts||[];data.finance.goals=data.finance.goals||[];
+data.finance.movements=data.finance.movements||[];data.finance.debts=data.finance.debts||[];data.finance.goals=data.finance.goals||[];data.finance.commitments=data.finance.commitments||[];
 let scrollIndex=0,scrollActive=false,scrollTimer=null;
 
 function localDate(d=new Date()){
@@ -574,7 +592,7 @@ function renderFinance(){
     <button class="secondary" onclick="deleteMovement('${x.id}')">×</button>
    </div>
   </div>`).join(""):"No hay movimientos para este mes.";
- renderDebts();renderGoals();
+ renderDebts();renderGoals();renderCommitments();renderCommitCalendar();
 }
 function addMovement(){
  const description=document.getElementById("movementDescription").value.trim();
@@ -600,6 +618,18 @@ function addDebt(){
  data.finance.debts.push({id:crypto.randomUUID(),name,total:amount,paid,remaining:amount-paid,interestRate:rate,interestDay:day,startDate,dueDate,notes,interestPayments:[],capitalPayments:[],createdAt:today()});
  ["debtName","debtAmount","debtPaid","debtInterestRate","debtInterestDay","debtDueDate","debtNotes"].forEach(id=>document.getElementById(id).value="");document.getElementById("debtStartDate").value=today();save();renderFinance();updateDebtInterestPreview();
 }
+function editDebt(id){
+ const d=data.finance.debts.find(x=>x.id===id);if(!d)return;
+ const name=prompt("Nombre de la deuda:",d.name);if(name===null)return;
+ const total=Number(prompt("Capital original (COP): ",d.total));if(!Number.isFinite(total)||total<=0){alert("Capital inválido.");return;}
+ const paid=Number(prompt("Capital abonado (COP): ",d.paid||0));if(!Number.isFinite(paid)||paid<0||paid>total){alert("Abono inválido.");return;}
+ const rate=Number(prompt("Interés mensual (%): ",d.interestRate||0));if(!Number.isFinite(rate)||rate<0){alert("Tasa inválida.");return;}
+ const day=Number(prompt("Día de pago de intereses (1-31): ",d.interestDay||1));if(!Number.isInteger(day)||day<1||day>31){alert("Día inválido.");return;}
+ const start=prompt("Fecha de inicio (YYYY-MM-DD): ",d.startDate||today());if(start===null)return;
+ const due=prompt("Fecha límite (YYYY-MM-DD, dejar vacío si no aplica): ",d.dueDate||"");if(due===null)return;
+ const notes=prompt("Notas o condiciones: ",d.notes||"");if(notes===null)return;
+ d.name=name.trim()||d.name;d.total=total;d.paid=paid;d.remaining=Math.max(0,total-paid);d.interestRate=rate;d.interestDay=day;d.startDate=start;d.dueDate=due;d.notes=notes;d.updatedAt=today();save();renderFinance();
+}
 function payDebtCapital(id){const d=data.finance.debts.find(x=>x.id===id),input=document.getElementById("capitalPay-"+id),amount=Number(input?.value);if(!d||amount<=0||amount>d.remaining){alert("El abono debe ser mayor que cero y no superar el capital pendiente.");return;}d.paid=Number(d.paid||0)+amount;d.remaining=Math.max(0,Number(d.remaining||0)-amount);d.capitalPayments=d.capitalPayments||[];d.capitalPayments.push({id:crypto.randomUUID(),amount,date:today()});save();renderFinance();}
 function payDebtInterest(id){const d=data.finance.debts.find(x=>x.id===id);if(!d)return;const amount=debtInterest(d),month=today().slice(0,7);if(amount<=0){alert("Esta deuda no tiene interés mensual pendiente.");return;}if(interestPaidThisMonth(d,month)){alert("El interés de este mes ya está registrado como pagado.");return;}if(!confirm("¿Registrar el pago de intereses por "+money(amount)+" de "+d.name+"?"))return;d.interestPayments=d.interestPayments||[];d.interestPayments.push({id:crypto.randomUUID(),amount,date:today(),month});data.finance.movements.push({id:crypto.randomUUID(),type:"expense",description:"Intereses: "+d.name,amount,date:today(),category:"Otros"});save();renderFinance();}
 function deleteDebt(id){if(!confirm("¿Eliminar esta deuda y su historial de pagos?"))return;data.finance.debts=data.finance.debts.filter(x=>x.id!==id);save();renderFinance();}
@@ -608,11 +638,33 @@ function renderDebts(){
  debts.forEach(d=>{d.paid=Number(d.paid||0);d.remaining=Number(d.remaining??(Number(d.total||0)-d.paid));d.interestRate=Number(d.interestRate||0);d.interestDay=Number(d.interestDay||1);d.interestPayments=d.interestPayments||[];d.capitalPayments=d.capitalPayments||[];d.notes=d.notes||"";if(d.remaining>0){capitalTotal+=d.remaining;activeCount++;monthlyInterestTotal+=debtInterest(d);if(d.interestRate&&!interestPaidThisMonth(d)){interestDueTotal+=debtInterest(d);upcoming.push({date:debtInterestDueDate(d),name:d.name,type:"Interés mensual",amount:debtInterest(d),id:d.id});}if(d.dueDate&&d.remaining>0)upcoming.push({date:d.dueDate,name:d.name,type:"Fecha límite de capital",amount:d.remaining,id:d.id});}});
  document.getElementById("debtCapitalTotal").textContent=money(capitalTotal);document.getElementById("debtInterestMonthlyTotal").textContent=money(monthlyInterestTotal);document.getElementById("debtInterestDueTotal").textContent=money(interestDueTotal);document.getElementById("debtActiveCount").textContent=activeCount;
  upcoming.sort((a,b)=>a.date.localeCompare(b.date));const up=document.getElementById("debtUpcomingPayments");up.innerHTML=upcoming.length?upcoming.slice(0,12).map(x=>`<div class="list-item"><div class="row"><strong>${escapeHTML(x.name)} · ${escapeHTML(x.type)}</strong><strong>${money(x.amount)}</strong></div><div class="small ${x.date<today()?"red":x.date===today()?"orange":"muted"}">${x.date} · ${x.date<today()?"VENCIDO":x.date===today()?"VENCE HOY":"Próximo"}</div></div>`).join(""):"No hay pagos pendientes próximos.";
- el.innerHTML=debts.length?debts.map(d=>{const i=debtInterest(d),due=d.dueDate||"",status=due&&d.remaining>0?(due<today()?"VENCIDA":due===today()?"VENCE HOY":"Pendiente"):d.remaining<=0?"Pagada":"Sin fecha límite";return `<div class="list-item"><div class="row"><strong>${escapeHTML(d.name)}</strong><strong class="orange">${money(d.remaining)}</strong></div><div class="small muted">Capital inicial: ${money(d.total)} · Capital abonado: ${money(d.paid)} · Capital pendiente: ${money(d.remaining)}</div><div class="small muted">Interés: ${d.interestRate}% mensual · ${money(i)} al mes · Día de pago: ${d.interestDay}</div><div class="small ${due&&d.remaining>0&&due<today()?"red":due===today()?"orange":"muted"}">${due?`Fecha límite: ${due} · ${status}`:"Sin fecha límite registrada"}</div><div class="small ${interestStatus(d)==="Interés vencido"?"red":interestStatus(d)==="Interés vence hoy"?"orange":"muted"}">${interestStatus(d)}${d.interestRate?` · Fecha de pago mensual: ${debtInterestDueDate(d)}`:""}</div><div class="progress"><span style="width:${d.total?Math.min(100,d.paid/d.total*100):0}%"></span></div><div class="form-grid"><input type="number" min="1" id="capitalPay-${d.id}" placeholder="Abono a capital"><button onclick="payDebtCapital('${d.id}')">Abonar capital</button></div>${d.interestRate?`<button class="secondary" onclick="payDebtInterest('${d.id}')">Registrar pago de interés (${money(i)})</button>`:""}<div class="small muted" style="margin-top:8px">${escapeHTML(d.notes||"")}</div><details><summary class="small">Historial de pagos</summary><div class="small muted">${(d.capitalPayments||[]).length?d.capitalPayments.map(p=>`${p.date} · Abono a capital ${money(p.amount)}`).join("<br>"):"Sin abonos de capital registrados."}<br>${(d.interestPayments||[]).length?d.interestPayments.map(p=>`${p.date} · Interés pagado ${money(p.amount)} (${p.month})`).join("<br>"):"Sin pagos de intereses registrados."}</div></details><button class="secondary" onclick="deleteDebt('${d.id}')">Eliminar deuda</button></div>`}).join(""):"No tienes deudas registradas.";
+ el.innerHTML=debts.length?debts.map(d=>{const i=debtInterest(d),due=d.dueDate||"",status=due&&d.remaining>0?(due<today()?"VENCIDA":due===today()?"VENCE HOY":"Pendiente"):d.remaining<=0?"Pagada":"Sin fecha límite";return `<div class="list-item"><div class="row"><strong>${escapeHTML(d.name)}</strong><strong class="orange">${money(d.remaining)}</strong></div><div class="small muted">Capital inicial: ${money(d.total)} · Capital abonado: ${money(d.paid)} · Capital pendiente: ${money(d.remaining)}</div><div class="small muted">Interés: ${d.interestRate}% mensual · ${money(i)} al mes · Día de pago: ${d.interestDay}</div><div class="small ${due&&d.remaining>0&&due<today()?"red":due===today()?"orange":"muted"}">${due?`Fecha límite: ${due} · ${status}`:"Sin fecha límite registrada"}</div><div class="small ${interestStatus(d)==="Interés vencido"?"red":interestStatus(d)==="Interés vence hoy"?"orange":"muted"}">${interestStatus(d)}${d.interestRate?` · Fecha de pago mensual: ${debtInterestDueDate(d)}`:""}</div><div class="progress"><span style="width:${d.total?Math.min(100,d.paid/d.total*100):0}%"></span></div><div class="form-grid"><input type="number" min="1" id="capitalPay-${d.id}" placeholder="Abono a capital"><button onclick="payDebtCapital('${d.id}')">Abonar capital</button></div>${d.interestRate?`<button class="secondary" onclick="payDebtInterest('${d.id}')">Registrar pago de interés (${money(i)})</button>`:""}<div class="small muted" style="margin-top:8px">${escapeHTML(d.notes||"")}</div><details><summary class="small">Historial de pagos</summary><div class="small muted">${(d.capitalPayments||[]).length?d.capitalPayments.map(p=>`${p.date} · Abono a capital ${money(p.amount)}`).join("<br>"):"Sin abonos de capital registrados."}<br>${(d.interestPayments||[]).length?d.interestPayments.map(p=>`${p.date} · Interés pagado ${money(p.amount)} (${p.month})`).join("<br>"):"Sin pagos de intereses registrados."}</div></details><button class="secondary" onclick="editDebt('${d.id}')">Editar deuda</button><button class="secondary" onclick="deleteDebt('${d.id}')">Eliminar deuda</button></div>`}).join(""):"No tienes deudas registradas.";
 }
 function updateDebtInterestPreview(){const amount=Number(document.getElementById("debtAmount")?.value||0),paid=Number(document.getElementById("debtPaid")?.value||0),rate=Number(document.getElementById("debtInterestRate")?.value||0),capital=Math.max(0,amount-paid),interest=Math.round(capital*rate/100),el=document.getElementById("debtInterestPreview");if(el)el.innerHTML=`Capital pendiente estimado: <strong>${money(capital)}</strong><br>Interés mensual estimado: <strong>${money(interest)}</strong><br>Total mensual estimado (capital + interés): <strong>${money(capital+interest)}</strong>`;}
 ["debtAmount","debtPaid","debtInterestRate"].forEach(id=>document.getElementById(id)?.addEventListener("input",updateDebtInterestPreview));
 function payDebt(id){payDebtCapital(id);}
+function addCommitment(){
+ const name=document.getElementById("commitName").value.trim(),amount=Number(document.getElementById("commitAmount").value),dueDate=document.getElementById("commitDate").value,frequency=document.getElementById("commitFrequency").value,category=document.getElementById("commitCategory").value,debtId=document.getElementById("commitDebt").value,capitalizable=document.getElementById("commitCapitalizable").checked,notes=document.getElementById("commitNotes").value.trim();
+ if(!name||amount<=0||!dueDate){alert("Completa nombre, valor y fecha del compromiso.");return;}
+ data.finance.commitments=data.finance.commitments||[];data.finance.commitments.push({id:crypto.randomUUID(),name,amount,dueDate,frequency,category,debtId,capitalizable,notes,status:"pending",payments:[],createdAt:today()});
+ ["commitName","commitAmount","commitDate","commitNotes"].forEach(id=>document.getElementById(id).value="");document.getElementById("commitFrequency").value="once";document.getElementById("commitCapitalizable").checked=false;save();renderFinance();
+}
+function renderCommitments(){
+ const list=document.getElementById("commitmentList"),sel=document.getElementById("commitDebt");if(!list||!sel)return;const debts=data.finance.debts||[];sel.innerHTML='<option value="">Sin vincular</option>'+debts.map(d=>`<option value="${d.id}">${escapeHTML(d.name)}</option>`).join("");
+ const items=data.finance.commitments||[];const sorted=[...items].sort((a,b)=>(a.dueDate||"").localeCompare(b.dueDate||""));
+ list.innerHTML=sorted.length?sorted.map(c=>{const paid=Number(c.paidAmount||0),left=Math.max(0,Number(c.amount||0)-paid),isPaid=c.status==="paid"||left<=0,late=!isPaid&&c.dueDate<today();return `<div class="list-item"><div class="row"><strong>${escapeHTML(c.name)}</strong><strong class="${isPaid?'green':late?'red':'orange'}">${money(left)}</strong></div><div class="small ${late?'red':'muted'}">${c.dueDate||'Sin fecha'} · ${isPaid?'PAGADO':late?'VENCIDO':'PENDIENTE'} · ${escapeHTML(c.category||'Otros')}</div><div class="small muted">Frecuencia: ${frequencyLabel(c.frequency)}${c.debtId?' · Vinculado a deuda':''}${c.notes?' · '+escapeHTML(c.notes):''}</div>${!isPaid?`<div class="form-grid"><input id="commitPay-${c.id}" type="number" min="1" max="${left}" placeholder="Valor a pagar"><button onclick="payCommitment('${c.id}')">Registrar pago</button></div>${c.debtId&&c.capitalizable?`<button class="secondary" onclick="capitalizeCommitment('${c.id}')">Capitalizar en deuda vinculada</button>`:''}<button class="secondary" onclick="editCommitment('${c.id}')">Editar compromiso</button>`:''}<button class="secondary" onclick="deleteCommitment('${c.id}')">Eliminar</button></div>`}).join(""):"No tienes compromisos registrados.";
+}
+function frequencyLabel(f){return ({once:"Único",weekly:"Semanal",biweekly:"Quincenal",monthly:"Mensual"})[f]||"Único";}
+function payCommitment(id){const c=(data.finance.commitments||[]).find(x=>x.id===id),input=document.getElementById("commitPay-"+id),amount=Number(input?.value),left=Math.max(0,Number(c?.amount||0)-Number(c?.paidAmount||0));if(!c||amount<=0||amount>left){alert("Ingresa un pago válido, sin superar el saldo.");return;}c.payments=c.payments||[];c.payments.push({amount,date:today()});c.paidAmount=Number(c.paidAmount||0)+amount;if(c.paidAmount>=c.amount){c.status="paid";if(c.frequency!=="once")createNextCommitment(c);}data.finance.movements.push({id:crypto.randomUUID(),type:"expense",description:"Pago: "+c.name,amount,date:today(),category:c.category||"Otros"});save();renderFinance();}
+function addDays(date,days){const d=new Date(date+"T12:00:00");d.setDate(d.getDate()+days);return localDate(d);}
+function addMonths(date,months){const [y,m,d]=date.split("-").map(Number),last=new Date(y,m+months,0).getDate();return localDate(new Date(y,m+months-1,Math.min(d,last)));}
+function createNextCommitment(c){const nextDate=c.frequency==="weekly"?addDays(c.dueDate,7):c.frequency==="biweekly"?addDays(c.dueDate,14):addMonths(c.dueDate,1);if((data.finance.commitments||[]).some(x=>x.parentId===c.id&&x.dueDate===nextDate))return;data.finance.commitments.push({id:crypto.randomUUID(),parentId:c.id,name:c.name,amount:c.amount,dueDate:nextDate,frequency:c.frequency,category:c.category,debtId:c.debtId,capitalizable:c.capitalizable,notes:c.notes,status:"pending",payments:[],paidAmount:0,createdAt:today()});}
+function editCommitment(id){const c=data.finance.commitments.find(x=>x.id===id);if(!c)return;const name=prompt("Nombre del compromiso:",c.name);if(name===null)return;const amount=Number(prompt("Valor:",c.amount));if(!Number.isFinite(amount)||amount<=0){alert("Valor inválido.");return;}const due=prompt("Vencimiento (YYYY-MM-DD):",c.dueDate);if(due===null)return;const notes=prompt("Notas:",c.notes||"");if(notes===null)return;c.name=name.trim()||c.name;c.amount=amount;c.dueDate=due;c.notes=notes;save();renderFinance();}
+function deleteCommitment(id){if(!confirm("¿Eliminar este compromiso? Se conservará el historial financiero de movimientos si ya registraste pagos."))return;data.finance.commitments=data.finance.commitments.filter(x=>x.id!==id);save();renderFinance();}
+function capitalizeCommitment(id){const c=data.finance.commitments.find(x=>x.id===id),d=data.finance.debts.find(x=>x.id===c?.debtId);if(!c||!d){alert("No hay una deuda vinculada válida.");return;}const left=Math.max(0,c.amount-Number(c.paidAmount||0));if(left<=0){alert("No hay saldo pendiente para capitalizar.");return;}if(!confirm(`¿Sumar ${money(left)} al capital de ${d.name}? Esto no registra un pago; aumenta el saldo de la deuda.`))return;d.total=Number(d.total||0)+left;d.remaining=Number(d.remaining||0)+left;d.capitalizations=d.capitalizations||[];d.capitalizations.push({amount:left,date:today(),commitmentId:c.id,description:c.name});c.status="capitalized";c.capitalizedAmount=left;c.capitalizedDate=today();save();renderFinance();}
+function renderCommitCalendar(){const el=document.getElementById("commitCalendar"),monthInput=document.getElementById("commitCalendarMonth");if(!el||!monthInput)return;const month=monthInput.value||today().slice(0,7),[y,m]=month.split("-").map(Number),first=new Date(y,m-1,1),offset=(first.getDay()+6)%7,days=new Date(y,m,0).getDate();let html='<div class="money-grid" style="grid-template-columns:repeat(7,1fr)"><div class="small muted">Lun</div><div class="small muted">Mar</div><div class="small muted">Mié</div><div class="small muted">Jue</div><div class="small muted">Vie</div><div class="small muted">Sáb</div><div class="small muted">Dom</div>';for(let i=0;i<offset;i++)html+='<div></div>';for(let d=1;d<=days;d++){const date=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`,cs=(data.finance.commitments||[]).filter(c=>c.dueDate===date&&!['paid','capitalized'].includes(c.status));html+=`<button class="secondary" style="padding:8px;min-height:55px" onclick="showCalendarDate('${date}')">${d}${cs.length?`<div class="small ${cs.some(c=>c.dueDate<today())?'red':'orange'}">${cs.length} pago(s)</div>`:''}</button>`;}html+='</div>';el.innerHTML=html;}
+function showCalendarDate(date){const el=document.getElementById("calendarDayDetails");const cs=(data.finance.commitments||[]).filter(c=>c.dueDate===date);el.innerHTML=`<h3>${date}</h3>`+(cs.length?cs.map(c=>`<div class="list-item row"><span>${escapeHTML(c.name)} · ${c.status==='paid'?'Pagado':'Pendiente'}</span><strong>${money(Math.max(0,c.amount-(c.paidAmount||0)))}</strong></div>`).join(""):"No hay compromisos para este día.");}
+function shiftCalendarMonth(delta){const el=document.getElementById("commitCalendarMonth"),[y,m]=el.value.split("-").map(Number),d=new Date(y,m-1+delta,1);el.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;renderCommitCalendar();}
 function addGoal(){
  const name=document.getElementById("goalName").value.trim();
  const target=Number(document.getElementById("goalTarget").value);
@@ -698,7 +750,7 @@ function importData(){
 data.profile=data.profile||{registered:true,gender:"masculino",name:"",goal:"integral",cycleEnabled:false};
 data.nutrition=data.nutrition||{foods:[],bodyMetrics:[],periods:[]};
 data.finance=data.finance||{movements:[],debts:[],goals:[]};
-data.finance.movements=data.finance.movements||[];data.finance.debts=data.finance.debts||[];data.finance.goals=data.finance.goals||[];
+data.finance.movements=data.finance.movements||[];data.finance.debts=data.finance.debts||[];data.finance.goals=data.finance.goals||[];data.finance.commitments=data.finance.commitments||[];
 save();render();alert("Copia restaurada.");}catch(e){alert("Archivo no válido.");}};r.readAsText(f);
 }
 function resetData(){if(!confirm("¿Borrar todo tu progreso y tus datos financieros?"))return;if(!confirm("Esta acción no se puede deshacer. ¿Continuar?"))return;localStorage.removeItem(KEY);data=structuredClone(initial);save();render();}
@@ -758,7 +810,7 @@ function renderNutrition(){
   <div class="row"><span class="small muted">${x.amount} ${x.unit} · ${escapeHTML(x.source||"")}</span><strong>${x.k||0} kcal</strong></div>
   <div class="small muted">Proteína ${x.p||0} g · Carbohidratos ${x.c||0} g · Grasas ${x.f||0} g</div><button class="secondary small-btn" onclick="deleteFood('${x.id}')">Eliminar</button></div>`).join("")).join(""):"Todavía no has registrado alimentos para esta fecha.";
  const past=Array.from({length:7},(_,i)=>{const d=new Date(date+"T12:00:00");d.setDate(d.getDate()-i);return localDate(d);}).map(d=>({date:d,k:data.nutrition.foods.filter(x=>x.date===d).reduce((s,x)=>s+(x.k||0),0)})).filter(x=>x.k>0);
- document.getElementById("nutritionSummary").innerHTML=past.length?`Promedio de los días con registros en los últimos 7 días: <strong>${Math.round(past.reduce((s,x)=>s+x.k,0)/past.length)} kcal/día</strong>. Hay ${past.length} día(s) registrados. Es una estimación incompleta si faltan comidas o cantidades.`:"Registra tus comidas para comenzar a ver tendencias.";
+ const targetK=Number(document.getElementById("nutritionCalorieTarget")?.value||0),targetP=Number(document.getElementById("nutritionProteinTarget")?.value||0),fruitVeg=items.filter(x=>/fruta|verdura|vegetal|ensalada|espinaca|brocoli|tomate|zanahoria|manzana|banano|naranja|pera|uva|papaya|mango/i.test(x.name)).length,proteinFood=items.filter(x=>/pollo|huevo|carne|atun|pescado|leche|yogur|queso|lenteja|frijol|garbanzo|proteina/i.test(x.name)).length;let assessment="Registra más comidas para obtener un análisis más representativo.";if(items.length){assessment=targetK? (total.k<targetK*.75?"Consumo por debajo del 75% de tu meta configurada. Revisa si faltan comidas por registrar.":total.k>targetK*1.2?"Superas en más del 20% tu meta configurada; interpreta según tu objetivo y actividad.":"Tu consumo está cerca de la meta que configuraste.") : "No has configurado una meta calórica; el resumen describe tus registros sin juzgar si son suficientes.";if(!fruitVeg)assessment+=" No aparecen frutas o verduras identificadas en los alimentos registrados hoy.";if(!proteinFood)assessment+=" No se identifican fuentes claras de proteína en el registro de hoy.";}document.getElementById("nutritionSummary").innerHTML=`<strong>Resumen de hoy:</strong> ${Math.round(total.k)} kcal · ${total.p.toFixed(1)} g proteína · ${total.c.toFixed(1)} g carbohidratos · ${total.f.toFixed(1)} g grasas<br>${targetK?`Meta: ${targetK} kcal · ${Math.round(total.k-targetK)} kcal de diferencia<br>`:""}${targetP?`Proteína: ${total.p.toFixed(1)} de ${targetP} g (${Math.round(total.p/targetP*100)}%)<br>`:""}<strong>Observación:</strong> ${assessment}<br>${past.length?`Promedio de los días registrados de los últimos 7 días: ${Math.round(past.reduce((s,x)=>s+x.k,0)/past.length)} kcal/día (${past.length} día(s)).`:""}<span class="small muted">Análisis orientativo; depende de la precisión de las cantidades y de registrar todas las comidas.</span>`;
  renderBodyMetrics();renderPeriods();
 }
 function copyFoodDay(){
@@ -794,6 +846,7 @@ function render(){
  document.getElementById("availableTime").value=data.availableTime;
 }
 document.getElementById("financeMonth").value=today().slice(0,7);
+document.getElementById("commitCalendarMonth").value=today().slice(0,7);document.getElementById("commitDate").value=today();document.getElementById("commitCalendarMonth").addEventListener("change",renderCommitCalendar);
 document.getElementById("financeMonth").addEventListener("change",renderFinance);
 document.getElementById("movementDate").value=today();
 if(document.getElementById("debtStartDate"))document.getElementById("debtStartDate").value=today();
@@ -801,7 +854,7 @@ updateDebtInterestPreview();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
 render();updateEvaluation();
 if(!data.profile?.registered)document.getElementById("onboarding").classList.remove("hidden");
-document.getElementById("nutritionDate").value=today();document.getElementById("bodyDate").value=today();
+document.getElementById("nutritionDate").value=today();document.getElementById("bodyDate").value=today();document.getElementById("nutritionCalorieTarget").value=data.nutrition.targets.calories||"";document.getElementById("nutritionProteinTarget").value=data.nutrition.targets.protein||"";["nutritionCalorieTarget","nutritionProteinTarget"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{data.nutrition.targets.calories=Number(document.getElementById("nutritionCalorieTarget").value||0);data.nutrition.targets.protein=Number(document.getElementById("nutritionProteinTarget").value||0);save();renderNutrition();}));
 document.getElementById("nutritionDate").addEventListener("change",renderNutrition);
 </script>
 </body>
