@@ -3,796 +3,627 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0b1020">
-<meta name="description" content="PRIME QUEST: convierte tu vida en un videojuego de evolución personal.">
 <link rel="manifest" href="./manifest.json">
 <title>PRIME QUEST</title>
-
 <style>
-:root {
-  --bg:#0b1020;
-  --panel:#141c30;
-  --panel2:#1b2740;
-  --text:#f2f5ff;
-  --muted:#9ba8c2;
-  --accent:#8b7cff;
-  --green:#4dd6a0;
-  --orange:#ffbd69;
-  --red:#ff7272;
+:root{
+  --bg:#0b1020;--panel:#141c30;--panel2:#1b2740;
+  --text:#f2f5ff;--muted:#9ba8c2;--accent:#8b7cff;
+  --green:#4dd6a0;--red:#ff7272;--orange:#ffbd69;
   --border:#293550;
 }
-* {box-sizing:border-box}
-body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
-}
-button,input,select,textarea {font:inherit}
-button {
-  border:0;
-  cursor:pointer;
-  border-radius:12px;
-  padding:11px 15px;
-  background:var(--accent);
-  color:white;
-  font-weight:650;
-}
-button.secondary {background:var(--panel2);border:1px solid var(--border)}
-button.success {background:#176c54}
-button.danger {background:#773d49}
-button:disabled {opacity:.4;cursor:not-allowed}
-header {
-  padding:22px 18px 12px;
-  max-width:900px;
-  margin:auto;
-}
-.brand {font-size:13px;letter-spacing:3px;color:var(--accent);font-weight:800}
-h1 {margin:5px 0;font-size:29px;letter-spacing:1px}
-.subtitle {color:var(--muted);font-size:13px}
-main {max-width:900px;margin:auto;padding:12px 16px 100px}
-nav {
-  position:fixed;
-  z-index:5;
-  bottom:0;left:0;right:0;
-  display:flex;
-  justify-content:center;
-  background:#10182aee;
-  border-top:1px solid var(--border);
-  padding:9px 4px calc(9px + env(safe-area-inset-bottom));
-  backdrop-filter:blur(15px);
-}
-nav button {
-  flex:1;max-width:130px;
-  padding:9px 2px;
-  font-size:11px;
-  background:transparent;
-  color:var(--muted);
-}
-nav button.active {color:white;background:var(--panel2)}
-.page {display:none}
-.page.active {display:block}
-.card {
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:17px;
-  padding:17px;
-  margin-bottom:13px;
-}
-.card h2,.card h3 {margin:0 0 10px}
-.card h2 {font-size:18px}
-.card h3 {font-size:15px}
-.muted {color:var(--muted)}
-.small {font-size:12px}
-.row {display:flex;align-items:center;justify-content:space-between;gap:10px}
-.progress {
-  height:9px;background:#27334c;border-radius:20px;overflow:hidden;margin:12px 0;
-}
-.progress span {display:block;height:100%;background:var(--accent);border-radius:20px}
-.tag {
-  display:inline-block;
-  padding:5px 9px;
-  border-radius:20px;
-  background:var(--panel2);
-  color:#c7c2ff;
-  font-size:11px;
-  margin:3px 3px 3px 0;
-}
-.mission {border-left:3px solid var(--accent)}
-.mission.done {border-left-color:var(--green);opacity:.7}
-.mission p {font-size:13px;color:var(--muted);margin:6px 0 12px}
-.mission button {font-size:12px;padding:8px 11px}
-.mission-actions {display:flex;gap:7px;flex-wrap:wrap}
-.stat {
-  background:var(--panel2);
-  padding:13px;
-  border-radius:13px;
-  flex:1;
-  min-width:90px;
-}
-.stat strong {display:block;font-size:23px}
-.stat span {font-size:11px;color:var(--muted)}
-.stats {display:flex;gap:9px;flex-wrap:wrap}
-input,select,textarea {
-  width:100%;
-  padding:11px;
-  color:var(--text);
-  background:#0d1527;
-  border:1px solid var(--border);
-  border-radius:10px;
-  margin:6px 0 12px;
-}
-label {font-size:12px;color:var(--muted)}
-.dimension {
-  display:flex;justify-content:space-between;align-items:center;
-  padding:13px 0;border-bottom:1px solid var(--border);
-}
-.dimension:last-child {border:0}
-.score {color:var(--accent);font-weight:800}
-.notice {font-size:12px;color:var(--muted);line-height:1.6}
-.big-number {font-size:42px;font-weight:850;color:var(--green)}
-.no-scroll-card {
-  min-height:230px;
-  display:flex;flex-direction:column;justify-content:space-between;
-  background:linear-gradient(145deg,#202b49,#141c30);
-}
-.no-scroll-card h2 {font-size:23px}
-.hidden {display:none!important}
-hr {border:0;border-top:1px solid var(--border);margin:16px 0}
-@media(min-width:650px) {
-  main {padding-top:20px}
-  .grid2 {display:grid;grid-template-columns:1fr 1fr;gap:12px}
-}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0;border-radius:11px;padding:11px 15px;background:var(--accent);color:white;font-weight:650}
+button.secondary{background:var(--panel2);border:1px solid var(--border)}
+button.danger{background:#773d49}
+header{max-width:950px;margin:auto;padding:22px 17px 10px}
+.brand{font-size:12px;letter-spacing:3px;color:var(--accent);font-weight:800}
+h1{font-size:28px;margin:5px 0}
+h2{font-size:19px;margin:0 0 10px}
+h3{font-size:15px;margin:0 0 7px}
+p{line-height:1.5}
+main{max-width:950px;margin:auto;padding:12px 15px 105px}
+.page{display:none}.page.active{display:block}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:17px;padding:16px;margin-bottom:13px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.muted{color:var(--muted)}.small{font-size:12px}
+.tag{display:inline-block;background:var(--panel2);color:#c9c2ff;border-radius:20px;padding:5px 9px;font-size:11px}
+.progress{height:9px;background:#27334c;border-radius:20px;overflow:hidden;margin:12px 0}
+.progress span{display:block;height:100%;background:var(--green);width:0%;transition:width .2s}
+.stats{display:flex;gap:9px;flex-wrap:wrap;margin:13px 0}
+.stat{flex:1;min-width:100px;background:var(--panel2);padding:13px;border-radius:13px}
+.stat strong{display:block;font-size:22px}.stat span{font-size:11px;color:var(--muted)}
+.block-title{display:flex;align-items:center;justify-content:space-between;margin:23px 0 10px}
+.task{display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--border)}
+.task:last-child{border:0}
+.task input[type=checkbox]{appearance:none;flex:0 0 23px;width:23px;height:23px;margin:1px 0 0;border:2px solid #66738f;border-radius:7px;background:#0d1527;cursor:pointer}
+.task input[type=checkbox]:checked{background:var(--green);border-color:var(--green)}
+.task input[type=checkbox]:checked:after{content:"✓";display:block;text-align:center;color:#082219;font-weight:900;font-size:17px;line-height:19px}
+.task.done .task-name{text-decoration:line-through;color:var(--muted)}
+.task-name{font-weight:700;font-size:14px}
+.task-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-top:4px}
+.task-time{font-size:10px;color:var(--accent);margin-top:5px}
+.task-content{flex:1}
+input,select,textarea{width:100%;padding:11px;color:var(--text);background:#0d1527;border:1px solid var(--border);border-radius:10px;margin:6px 0 12px}
+label{font-size:12px;color:var(--muted)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.money{font-size:24px;font-weight:800}
+.green{color:var(--green)}.red{color:var(--red)}.orange{color:var(--orange)}
+.money-card{background:var(--panel2);padding:14px;border-radius:13px;min-width:0}
+.money-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.list-item{padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border:0}
+nav{position:fixed;z-index:10;bottom:0;left:0;right:0;display:flex;justify-content:center;background:#10182aee;border-top:1px solid var(--border);padding:8px 3px calc(8px + env(safe-area-inset-bottom));backdrop-filter:blur(15px)}
+nav button{flex:1;max-width:125px;padding:8px 1px;font-size:10px;background:transparent;color:var(--muted)}
+nav button.active{background:var(--panel2);color:white}
+.notice{font-size:12px;color:var(--muted);line-height:1.6}
+.big{font-size:38px;font-weight:850}
+.hidden{display:none!important}
+@media(min-width:650px){main{padding-top:20px}.money-grid{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
-
 <body>
+
 <header>
-  <div class="brand">YOUR PERSONAL EVOLUTION SYSTEM</div>
-  <h1>PRIME QUEST</h1>
-  <div class="subtitle">MISSION SYSTEM V1.0 · 90 DAYS</div>
+ <div class="brand">YOUR PERSONAL EVOLUTION SYSTEM</div>
+ <h1>PRIME QUEST</h1>
+ <div class="muted small">MISSION SYSTEM V1.0 · 90 DAYS</div>
 </header>
 
 <main>
 
 <!-- HOY -->
 <section id="hoy" class="page active">
-  <div class="card">
-    <div class="row">
-      <div>
-        <div class="muted small" id="phase">FASE 1 · FUNDAMENTOS</div>
-        <h2 id="dayTitle">DÍA 1 DE 90</h2>
-      </div>
-      <span class="tag" id="dayStatus">EN CURSO</span>
-    </div>
-    <div class="progress"><span id="dayProgress" style="width:1%"></span></div>
-    <div class="row small muted">
-      <span id="dateLabel"></span>
-      <span id="phaseProgress">1 / 30</span>
-    </div>
+ <div class="card">
+  <div class="row">
+   <div><div class="brand" id="phase">FASE 1 · FUNDAMENTOS</div><h2 id="dayTitle">DÍA 1 DE 90</h2></div>
+   <span class="tag" id="dayStatus">EN CURSO</span>
   </div>
+  <div class="progress"><span id="dayProgress"></span></div>
+  <div class="row small muted"><span id="dateLabel"></span><span id="taskCount">0 tareas</span></div>
+ </div>
 
-  <div class="stats">
-    <div class="stat"><strong id="streakValue">0</strong><span>RACHA ACTUAL</span></div>
-    <div class="stat"><strong id="completedValue">0/3</strong><span>PRIORITARIAS</span></div>
-    <div class="stat"><strong id="daysValue">0</strong><span>DÍAS REGISTRADOS</span></div>
+ <div class="stats">
+  <div class="stat"><strong id="percentValue">0%</strong><span>PROGRESO DEL DÍA</span></div>
+  <div class="stat"><strong id="streakValue">0</strong><span>RACHA</span></div>
+  <div class="stat"><strong id="doneValue">0/0</strong><span>TAREAS COMPLETADAS</span></div>
+ </div>
+
+ <div class="card">
+  <h2>Tu enfoque de hoy</h2>
+  <p class="muted small">Avanza paso a paso. No necesitas hacerlo todo perfectamente, pero sí ser consciente de tus acciones.</p>
+  <div class="tag">CONSISTENCIA ANTES QUE PERFECCIÓN</div>
+ </div>
+
+ <div id="dailyBlocks"></div>
+
+ <div class="card">
+  <h2>Misiones del día</h2>
+  <p class="notice">Además de tus actividades, elige hasta tres objetivos importantes que quieras sacar adelante hoy.</p>
+  <div id="missions"></div>
+  <input id="newMission" placeholder="Escribe una misión concreta...">
+  <button onclick="addMission()">Añadir misión</button>
+ </div>
+
+ <div class="card">
+  <h2>Cierre de jornada</h2>
+  <p class="notice">Registra tu jornada cuando hayas terminado. Un día de recuperación también es válido.</p>
+  <button onclick="closeDay()">Registrar jornada</button>
+  <button class="secondary" onclick="recoveryDay()">Día de recuperación</button>
+  <p id="closeMessage" class="notice"></p>
+ </div>
+</section>
+
+<!-- FINANZAS -->
+<section id="finanzas" class="page">
+ <div class="card">
+  <div class="row">
+   <div><div class="brand">CONTROL FINANCIERO</div><h2>Mis finanzas</h2></div>
+   <span class="tag">COP · PESOS COLOMBIANOS</span>
   </div>
+  <label>Consultar mes</label>
+  <input type="month" id="financeMonth">
+ </div>
 
-  <div class="card" style="margin-top:14px">
-    <h2>Tu enfoque de hoy</h2>
-    <p class="muted small">No necesitas hacerlo todo. Necesitas avanzar de forma consistente.</p>
-    <div id="focusText"></div>
+ <div class="card">
+  <div class="small muted">BALANCE DEL MES</div>
+  <div class="money" id="monthlyBalance">$0</div>
+  <div class="notice">Ingresos menos gastos registrados durante el mes seleccionado.</div>
+ </div>
+
+ <div class="money-grid">
+  <div class="money-card"><div class="small muted">INGRESOS</div><div class="money green" id="incomeTotal">$0</div></div>
+  <div class="money-card"><div class="small muted">GASTOS</div><div class="money red" id="expenseTotal">$0</div></div>
+  <div class="money-card"><div class="small muted">DEUDAS PENDIENTES</div><div class="money orange" id="debtTotal">$0</div></div>
+  <div class="money-card"><div class="small muted">AHORROS ACUMULADOS</div><div class="money green" id="savingTotal">$0</div></div>
+ </div>
+
+ <div class="card" style="margin-top:14px">
+  <h2>Registrar movimiento</h2>
+  <label>Tipo de movimiento</label>
+  <select id="movementType">
+   <option value="income">Ingreso</option>
+   <option value="expense">Gasto</option>
+  </select>
+  <label>Descripción</label>
+  <input id="movementDescription" placeholder="Ej. Venta, salario, mercado...">
+  <div class="form-grid">
+   <div><label>Valor en COP</label><input id="movementAmount" type="number" min="1" placeholder="50000"></div>
+   <div><label>Fecha</label><input id="movementDate" type="date"></div>
   </div>
+  <label>Categoría</label>
+  <select id="movementCategory">
+   <option>Trabajo / Negocio</option><option>Alimentación</option>
+   <option>Transporte</option><option>Vivienda</option>
+   <option>Servicios</option><option>Salud</option>
+   <option>Entretenimiento</option><option>Educación</option>
+   <option>Otros</option>
+  </select>
+  <button onclick="addMovement()">Guardar movimiento</button>
+ </div>
 
-  <h2>Misiones prioritarias</h2>
-  <p class="muted small">Tus tres compromisos principales del día.</p>
-  <div id="priorityMissions"></div>
+ <div class="card">
+  <div class="row"><h2>Movimientos del mes</h2><span class="tag" id="movementCount">0</span></div>
+  <div id="movementList" class="notice">Todavía no hay movimientos registrados.</div>
+ </div>
 
-  <div class="card">
-    <div class="row">
-      <div>
-        <h2>Misiones secundarias</h2>
-        <div class="muted small">Se desbloquean progresivamente.</div>
-      </div>
-      <span class="tag" id="secondaryCount">0 disponibles</span>
-    </div>
-    <div id="secondaryMissions"></div>
-    <button class="secondary" id="unlockButton" onclick="unlockNext()">Desbloquear siguiente misión</button>
+ <div class="card">
+  <h2>Mis deudas y obligaciones</h2>
+  <p class="notice">Registra tus deudas, consulta cuánto debes y descuenta cada abono.</p>
+  <label>Nombre de la deuda</label>
+  <input id="debtName" placeholder="Ej. Crédito, préstamo, tarjeta...">
+  <div class="form-grid">
+   <div><label>Valor total</label><input id="debtAmount" type="number" min="1" placeholder="1000000"></div>
+   <div><label>Abono inicial (opcional)</label><input id="debtPaid" type="number" min="0" placeholder="0"></div>
   </div>
+  <button onclick="addDebt()">Registrar deuda</button>
+  <div id="debtList" class="notice" style="margin-top:12px">No tienes deudas registradas.</div>
+ </div>
 
-  <div class="card" id="specialCard">
-    <h2>✨ Misión especial</h2>
-    <p class="muted small" id="specialText">Las misiones especiales aparecen ocasionalmente según tu evolución.</p>
-    <div id="specialMission"></div>
+ <div class="card">
+  <h2>Mis metas de ahorro</h2>
+  <label>Nombre de la meta</label>
+  <input id="goalName" placeholder="Ej. Fondo de emergencia">
+  <div class="form-grid">
+   <div><label>Objetivo en COP</label><input id="goalTarget" type="number" min="1" placeholder="3000000"></div>
+   <div><label>Ahorro inicial</label><input id="goalSaved" type="number" min="0" placeholder="0"></div>
   </div>
-
-  <div class="card">
-    <h2>Cerrar jornada</h2>
-    <p class="muted small">Registrar el día no significa que todo haya salido perfecto. Significa reconocer honestamente cómo avanzaste.</p>
-    <button class="success" id="closeDayButton" onclick="closeDay()">Registrar mi día</button>
-    <button class="secondary" onclick="recoveryDay()">Registrar día de recuperación</button>
-    <p id="closeMessage" class="notice"></p>
-  </div>
+  <button onclick="addGoal()">Crear meta</button>
+  <div id="goalList" style="margin-top:12px"></div>
+ </div>
 </section>
 
 <!-- DIMENSIONES -->
 <section id="dimensiones" class="page">
-  <div class="card">
-    <h2>Tus ocho dimensiones</h2>
-    <p class="muted small">Tu evolución no depende de una sola área de tu vida.</p>
-    <div id="dimensionsList"></div>
-  </div>
-  <div class="card">
-    <h2>Actualizar una dimensión</h2>
-    <label>Dimensión</label>
-    <select id="dimensionSelect"></select>
-    <label>¿Cómo está actualmente esta área? (0–100)</label>
-    <input id="dimensionScore" type="number" min="0" max="100" value="50">
-    <label>Observación o evidencia</label>
-    <textarea id="dimensionNote" rows="3" placeholder="¿Qué ha cambiado? ¿Qué necesitas mejorar?"></textarea>
-    <button onclick="saveDimension()">Guardar evaluación</button>
-  </div>
+ <div class="card">
+  <h2>Tus ocho dimensiones</h2>
+  <p class="notice">La evolución personal debe contemplar todas las áreas importantes de tu vida.</p>
+  <div id="dimensionList"></div>
+ </div>
+ <div class="card">
+  <h2>Actualizar dimensión</h2>
+  <label>Área</label><select id="dimensionSelect"></select>
+  <label>Valoración personal (0–100)</label><input type="number" id="dimensionScore" min="0" max="100" value="50">
+  <label>Observaciones</label><textarea id="dimensionNote" rows="3"></textarea>
+  <button onclick="saveDimension()">Guardar</button>
+ </div>
 </section>
 
 <!-- RACHA -->
 <section id="racha" class="page">
-  <div class="card">
-    <div class="muted small">TU CONSISTENCIA</div>
-    <div class="big-number" id="streakBig">0</div>
-    <h2>días de racha</h2>
-    <p class="muted small">La racha representa continuidad, no perfección. Un día difícil no borra tu progreso anterior.</p>
-  </div>
-  <div class="card">
-    <h2>Reglas de RACHA</h2>
-    <p class="notice">
-      • Un día registrado como jornada normal cuenta para la continuidad.<br>
-      • Un día de recuperación también cuenta como continuidad consciente.<br>
-      • Un día sin registro no suma a la racha.<br>
-      • No se suman varios días por registrar repetidamente la misma jornada.<br>
-      • Puedes retomar después de una interrupción sin empezar tu transformación desde cero.
-    </p>
-  </div>
-  <div class="card">
-    <h2>Tu historial</h2>
-    <div id="historyList" class="notice">Todavía no hay jornadas registradas.</div>
-  </div>
+ <div class="card">
+  <div class="brand">TU CONSISTENCIA</div>
+  <div class="big green" id="streakBig">0</div>
+  <h2>días de racha</h2>
+  <p class="notice">La racha reconoce tu continuidad, no la perfección. Puedes retomar después de un día difícil.</p>
+ </div>
+ <div class="card">
+  <h2>Historial de jornadas</h2>
+  <div id="historyList" class="notice">Todavía no hay jornadas registradas.</div>
+ </div>
 </section>
 
-<!-- EVALUACIÓN -->
+<!-- EVALUACION -->
 <section id="evaluacion" class="page">
-  <div class="card">
-    <h2>Evaluación de evolución</h2>
-    <p class="muted small">La meta es medir cambios reales, no solamente tareas completadas.</p>
-    <div class="tag">DÍA 0 · 30 · 60 · 90</div>
-    <label>Etapa de evaluación</label>
-    <select id="evaluationStage">
-      <option value="0">Día 0 · Punto de partida</option>
-      <option value="30">Día 30 · Fundamentos</option>
-      <option value="60">Día 60 · Evolución</option>
-      <option value="90">Día 90 · Consolidación</option>
-    </select>
-    <label>Hábitos (25%)</label>
-    <input type="number" id="evHabits" min="0" max="100" value="50">
-    <label>Consistencia y RACHA (20%)</label>
-    <input type="number" id="evStreak" min="0" max="100" value="50">
-    <label>Misiones completadas (15%)</label>
-    <input type="number" id="evMissions" min="0" max="100" value="50">
-    <label>Resultados observables (30%)</label>
-    <input type="number" id="evResults" min="0" max="100" value="50">
-    <label>Autoevaluación (10%)</label>
-    <input type="number" id="evSelf" min="0" max="100" value="50">
-    <label>¿Qué evidencia demuestra tu evolución?</label>
-    <textarea id="evEvidence" rows="3" placeholder="Describe cambios concretos, no solamente intenciones."></textarea>
-    <label>Confianza en esta evaluación</label>
-    <select id="evConfidence">
-      <option value="Alta">Alta · Tengo evidencia clara</option>
-      <option value="Media" selected>Media · Tengo algunas evidencias</option>
-      <option value="Baja">Baja · Es principalmente una percepción</option>
-    </select>
-    <button onclick="saveEvaluation()">Guardar evaluación</button>
-  </div>
-  <div class="card">
-    <h2>Resultado ponderado</h2>
-    <div class="big-number" id="evaluationResult">50</div>
-    <div id="evaluationLevel">EN DESARROLLO</div>
-    <p class="notice">Este indicador es orientativo. No reemplaza la evidencia real de tu evolución.</p>
-  </div>
-  <div class="card">
-    <h2>Evaluaciones anteriores</h2>
-    <div id="evaluationHistory" class="notice">Aún no hay evaluaciones guardadas.</div>
-  </div>
+ <div class="card">
+  <h2>Evaluación de evolución</h2>
+  <p class="notice">Compara tu situación al inicio, día 30, día 60 y día 90.</p>
+  <label>Etapa</label>
+  <select id="evaluationStage"><option value="0">Día 0</option><option value="30">Día 30</option><option value="60">Día 60</option><option value="90">Día 90</option></select>
+  <label>Hábitos (25%)</label><input id="evHabits" type="number" min="0" max="100" value="50">
+  <label>Consistencia / RACHA (20%)</label><input id="evStreak" type="number" min="0" max="100" value="50">
+  <label>Misiones completadas (15%)</label><input id="evMissions" type="number" min="0" max="100" value="50">
+  <label>Resultados observables (30%)</label><input id="evResults" type="number" min="0" max="100" value="50">
+  <label>Autoevaluación (10%)</label><input id="evSelf" type="number" min="0" max="100" value="50">
+  <label>Evidencia de tu evolución</label><textarea id="evEvidence" rows="3"></textarea>
+  <label>Confianza en la evaluación</label>
+  <select id="evConfidence"><option>Alta</option><option selected>Media</option><option>Baja</option></select>
+  <button onclick="saveEvaluation()">Guardar evaluación</button>
+  <hr>
+  <div class="big" id="evaluationResult">50</div>
+  <div id="evaluationLevel">EN DESARROLLO</div>
+ </div>
+ <div class="card"><h2>Evaluaciones anteriores</h2><div id="evaluationHistory" class="notice"></div></div>
 </section>
 
 <!-- NO SCROLL -->
 <section id="noscroll" class="page">
-  <div class="card">
-    <div class="row">
-      <div>
-        <div class="brand">MODO NO SCROLL</div>
-        <h2>15 minutos para ti</h2>
-      </div>
-      <span class="tag">MODO MIXTO</span>
-    </div>
-    <p class="muted small">Descubre contenido seleccionado para aprender, reflexionar y crecer. Desliza verticalmente o pasa inmediatamente lo que no te interese.</p>
-    <button onclick="startNoScroll()">Comenzar sesión</button>
-    <button class="secondary" onclick="nextNoScroll()">Saltar contenido</button>
-  </div>
-  <div id="noScrollContent"></div>
-  <div class="row">
-    <button class="secondary" onclick="nextNoScroll()">Siguiente ↓</button>
-    <button onclick="finishNoScroll()">Terminar sesión</button>
-  </div>
-  <p class="notice" id="noScrollStatus">Tu sesión aún no ha comenzado.</p>
+ <div class="card">
+  <div class="brand">MODO NO SCROLL</div>
+  <h2>15 minutos para ti</h2>
+  <p class="notice">Contenido breve para aprender, reflexionar y crecer. Puedes saltar lo que no te interese.</p>
+  <button onclick="startNoScroll()">Iniciar sesión</button>
+  <button class="secondary" onclick="nextNoScroll()">Saltar contenido</button>
+ </div>
+ <div id="noScrollContent"></div>
+ <button onclick="finishNoScroll()">Terminar sesión</button>
+ <p id="noScrollStatus" class="notice">Sesión no iniciada.</p>
 </section>
 
 <!-- AJUSTES -->
 <section id="ajustes" class="page">
-  <div class="card">
-    <h2>Configuración de PRIME QUEST</h2>
-    <label>Fecha de inicio del desafío</label>
-    <input type="date" id="startDate">
-    <button onclick="saveSettings()">Guardar configuración</button>
-    <hr>
-    <h3>Disponibilidad diaria</h3>
-    <label>Tiempo que normalmente puedes dedicar</label>
-    <select id="availableTime">
-      <option value="15">15 minutos</option>
-      <option value="30">30 minutos</option>
-      <option value="60" selected>1 hora</option>
-      <option value="120">2 horas</option>
-      <option value="180">Más de 2 horas</option>
-    </select>
-    <button onclick="saveSettings()">Actualizar disponibilidad</button>
-  </div>
-  <div class="card">
-    <h2>Tus datos</h2>
-    <p class="notice">Tu información se guarda en este dispositivo. Exporta periódicamente una copia de seguridad.</p>
-    <button onclick="exportData()">Exportar copia de seguridad</button>
-    <label>Restaurar copia de seguridad</label>
-    <input type="file" id="importFile" accept=".json,application/json">
-    <button class="secondary" onclick="importData()">Importar datos</button>
-  </div>
-  <div class="card">
-    <h2>Reiniciar proyecto</h2>
-    <p class="notice">Esta acción elimina los datos guardados en este dispositivo. Exporta una copia antes de continuar.</p>
-    <button class="danger" onclick="resetData()">Reiniciar PRIME QUEST</button>
-  </div>
+ <div class="card">
+  <h2>Configuración</h2>
+  <label>Fecha de inicio del desafío</label><input type="date" id="startDate">
+  <label>Tiempo disponible al día</label>
+  <select id="availableTime"><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">1 hora</option><option value="120">2 horas</option><option value="180">Más de 2 horas</option></select>
+  <button onclick="saveSettings()">Guardar configuración</button>
+ </div>
+ <div class="card">
+  <h2>Copias de seguridad</h2>
+  <button onclick="exportData()">Exportar mis datos</button>
+  <label>Restaurar copia JSON</label><input type="file" id="importFile" accept=".json">
+  <button class="secondary" onclick="importData()">Importar copia</button>
+ </div>
+ <div class="card">
+  <h2>Reiniciar proyecto</h2>
+  <p class="notice">Esta acción elimina el progreso y los datos financieros guardados en este dispositivo.</p>
+  <button class="danger" onclick="resetData()">Reiniciar PRIME QUEST</button>
+ </div>
 </section>
 
 </main>
 
 <nav>
-  <button class="active" onclick="showPage('hoy',this)">⌂<br>Hoy</button>
-  <button onclick="showPage('dimensiones',this)">◈<br>Áreas</button>
-  <button onclick="showPage('racha',this)">🔥<br>Racha</button>
-  <button onclick="showPage('evaluacion',this)">◎<br>Evaluación</button>
-  <button onclick="showPage('noscroll',this)">↓<br>No Scroll</button>
-  <button onclick="showPage('ajustes',this)">⚙<br>Ajustes</button>
+ <button class="active" onclick="showPage('hoy',this)">⌂<br>HOY</button>
+ <button onclick="showPage('finanzas',this)">＄<br>Finanzas</button>
+ <button onclick="showPage('dimensiones',this)">◈<br>Áreas</button>
+ <button onclick="showPage('racha',this)">🔥<br>Racha</button>
+ <button onclick="showPage('evaluacion',this)">◎<br>Evaluar</button>
+ <button onclick="showPage('noscroll',this)">↓<br>No Scroll</button>
+ <button onclick="showPage('ajustes',this)">⚙<br>Ajustes</button>
 </nav>
 
 <script>
-const STORAGE_KEY = "primeQuestMissionV1";
-
-const dimensionNames = [
-  "Físico",
-  "Intelectual",
-  "Mental y emocional",
-  "Profesional y económico",
-  "Imagen y cuidado personal",
-  "Social",
-  "Propósito y valores",
-  "Descanso y recuperación"
+const KEY="primeQuestV2";
+const dimensions=[
+ "Físico","Intelectual","Mental y emocional","Profesional y económico",
+ "Imagen y cuidado personal","Social","Propósito y valores","Descanso y recuperación"
 ];
 
-const initialData = {
-  startDate: new Date().toISOString().slice(0,10),
-  availableTime:60,
-  days:{},
-  dimensions:{},
-  evaluations:[],
-  noScrollSessions:0,
-  secondaryUnlocked:{}
+const blocks=[
+ {title:"01 · DESPERTAR Y PREPARACIÓN",time:"Inicio de la jornada",tasks:[
+  ["Iniciar el día","Levántate, apaga la alarma y evita abrir redes sociales durante los primeros minutos.","2 min"],
+  ["Ventilar y organizar la habitación","Abre cortinas y ventanas si es posible. Deja entrar luz natural y aire fresco.","2 min"],
+  ["Tender la cama","Estira sábanas, organiza almohadas y deja la cama lista.","3 min"],
+  ["Ir al baño e higiene básica","Utiliza el sanitario, lávate las manos y prepara tus elementos de aseo.","3 min"],
+  ["Cepillado dental","Cepilla todas las superficies durante dos minutos y limpia suavemente la lengua.","3 min"],
+  ["Cuidado facial de mañana","Limpia el rostro con un producto suave, aplica hidratante y termina con protector solar FPS 30 o superior.","5 min"],
+  ["Vestirte y prepararte","Ponte ropa limpia y adecuada para las actividades del día.","5 min"]
+ ]},
+ {title:"02 · ACTIVACIÓN FÍSICA",time:"Movimiento y fuerza",tasks:[
+  ["Preparar el espacio","Despeja el área, usa ropa cómoda y ten agua disponible.","2 min"],
+  ["Marcha en el sitio","Camina en el mismo lugar moviendo brazos suavemente para elevar la temperatura corporal.","1 min"],
+  ["Movilidad de hombros y brazos","Realiza círculos controlados de hombros y movimientos suaves de brazos.","1 min"],
+  ["Movilidad de cadera y tobillos","Haz movimientos circulares suaves de cadera y tobillos.","1 min"],
+  ["Flexiones de pecho","Realiza 2 series de 8 repeticiones. Puedes apoyar rodillas si lo necesitas. Mantén el cuerpo alineado.","3 min"],
+  ["Sentadillas","Realiza 2 series de 10 repeticiones. Lleva la cadera hacia atrás y mantén los pies apoyados.","3 min"],
+  ["Plancha abdominal","Realiza 2 series de 20 segundos. Mantén abdomen activo y espalda alineada.","2 min"],
+  ["Recuperación","Camina suavemente, respira con tranquilidad y guarda los elementos utilizados.","2 min"]
+ ]},
+ {title:"03 · NUTRICIÓN E HIDRATACIÓN",time:"Alimentación consciente",tasks:[
+  ["Preparar el desayuno","Organiza una comida con proteína, una fuente de energía y fruta o vegetales.","10 min"],
+  ["Servir agua","Acompaña tu desayuno con agua y deja una botella disponible para el día.","1 min"],
+  ["Desayunar sin afán","Siéntate a comer, mastica con tranquilidad y evita distraerte con el teléfono.","15 min"],
+  ["Limpiar después de comer","Lava los utensilios, limpia la superficie y deja organizada la cocina.","5 min"]
+ ]},
+ {title:"04 · DESARROLLO Y TRABAJO",time:"Construcción de objetivos",tasks:[
+  ["Revisar prioridades","Consulta tus objetivos y elige las tres tareas más importantes de hoy.","5 min"],
+  ["Bloque de concentración","Trabaja durante 25 minutos en una tarea importante sin redes sociales ni interrupciones evitables.","25 min"],
+  ["Aprendizaje diario","Dedica 15 minutos a estudiar, leer o practicar una habilidad útil.","15 min"],
+  ["Revisar finanzas","Registra los ingresos y gastos que hayas tenido y consulta tus obligaciones pendientes.","5 min"]
+ ]},
+ {title:"05 · CUIDADO DEL ENTORNO",time:"Orden y responsabilidades",tasks:[
+  ["Ordenar el espacio de trabajo","Retira objetos innecesarios y deja a mano lo que necesitas para trabajar.","5 min"],
+  ["Atender una responsabilidad doméstica","Completa una tarea concreta de limpieza, organización o mantenimiento.","10 min"],
+  ["Revisar pendientes","Identifica compromisos que no pueden esperar y define cuándo los atenderás.","5 min"]
+ ]},
+ {title:"06 · VIDA PERSONAL Y SOCIAL",time:"Bienestar y relaciones",tasks:[
+  ["Contacto significativo","Escribe o llama a una persona importante para ti y conversa con atención.","5 min"],
+  ["Pausa consciente","Aléjate de pantallas, respira tranquilamente y reconoce cómo te sientes.","5 min"],
+  ["Actividad de propósito","Dedica unos minutos a una actividad alineada con tus valores o proyectos personales.","10 min"]
+ ]},
+ {title:"07 · CIERRE Y DESCANSO",time:"Preparación para dormir",tasks:[
+  ["Revisar el día","Identifica qué cumpliste, qué quedó pendiente y qué aprendiste.","5 min"],
+  ["Preparar mañana","Organiza ropa, espacio y elementos que necesitarás al despertar.","5 min"],
+  ["Higiene nocturna","Cepilla tus dientes, utiliza hilo dental y realiza tu rutina facial nocturna.","7 min"],
+  ["Desconexión digital","Reduce el uso de pantallas y evita contenido que retrase tu descanso.","20 min"],
+  ["Acostarte a la hora prevista","Ve a la cama y prepara un ambiente oscuro, tranquilo y cómodo.","Según horario"]
+ ]}
+];
+
+const initial={
+ startDate:localDate(),availableTime:120,days:{},finance:{movements:[],debts:[],goals:[]},
+ dimensions:{},evaluations:[],missions:{},noScrollSessions:0
 };
+let data=load();
+let scrollIndex=0,scrollActive=false,scrollTimer=null;
 
-let data = loadData();
-let noScrollIndex = 0;
-let noScrollActive = false;
-let noScrollTimer = null;
-
-function loadData(){
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return saved ? {...structuredClone(initialData),...saved} : structuredClone(initialData);
-  } catch(e) {
-    return structuredClone(initialData);
-  }
+function localDate(d=new Date()){
+ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
-
-function saveData(){
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+function load(){
+ try{return {...structuredClone(initial),...JSON.parse(localStorage.getItem(KEY))};}
+ catch(e){return structuredClone(initial);}
 }
-
-function localDate(date=new Date()){
-  const y=date.getFullYear();
-  const m=String(date.getMonth()+1).padStart(2,"0");
-  const d=String(date.getDate()).padStart(2,"0");
-  return `${y}-${m}-${d}`;
-}
-
+function save(){localStorage.setItem(KEY,JSON.stringify(data));}
+function today(){return localDate();}
 function dayNumber(){
-  const start = new Date(data.startDate+"T12:00:00");
-  const today = new Date(localDate()+"T12:00:00");
-  return Math.floor((today-start)/86400000)+1;
+ return Math.floor((new Date(today()+"T12:00:00")-new Date(data.startDate+"T12:00:00"))/86400000)+1;
 }
-
-function phaseInfo(day){
-  if(day<=30) return {name:"FUNDAMENTOS",start:1};
-  if(day<=60) return {name:"EVOLUCIÓN",start:31};
-  return {name:"CONSOLIDACIÓN",start:61};
+function dayData(){
+ if(!data.days[today()])data.days[today()]={checks:{},type:""};
+ return data.days[today()];
 }
-
-function currentDayKey(){
-  return localDate();
+function allTasks(){return blocks.flatMap((b,bi)=>b.tasks.map((t,ti)=>({bi,ti,t})));}
+function checkedCount(){
+ const checks=dayData().checks;
+ return Object.values(checks).filter(Boolean).length;
 }
-
-function streakCount(){
-  let count=0;
-  let date=new Date();
-  const today=localDate(date);
-  if(!data.days[today]){
-    date.setDate(date.getDate()-1);
-  }
-  while(true){
-    const key=localDate(date);
-    if(!data.days[key] || !["normal","recovery"].includes(data.days[key].type)) break;
-    count++;
-    date.setDate(date.getDate()-1);
-  }
-  return count;
+function streak(){
+ let d=new Date();
+ if(!data.days[today()]?.type)d.setDate(d.getDate()-1);
+ let n=0;
+ while(true){
+  const k=localDate(d);
+  if(!["normal","recovery"].includes(data.days[k]?.type))break;
+  n++;d.setDate(d.getDate()-1);
+ }
+ return n;
 }
-
-function registeredDays(){
-  return Object.values(data.days).filter(d=>["normal","recovery"].includes(d.type)).length;
+function renderToday(){
+ const day=Math.max(1,Math.min(90,dayNumber()));
+ const phase=day<=30?"FUNDAMENTOS":day<=60?"EVOLUCIÓN":"CONSOLIDACIÓN";
+ document.getElementById("dayTitle").textContent=`DÍA ${day} DE 90`;
+ document.getElementById("phase").textContent=`FASE ${day<=30?1:day<=60?2:3} · ${phase}`;
+ document.getElementById("dateLabel").textContent=new Date().toLocaleDateString("es-CO",{weekday:"long",day:"numeric",month:"long"});
+ const total=allTasks().length,done=checkedCount(),pct=Math.round(done/total*100);
+ document.getElementById("dayProgress").style.width=pct+"%";
+ document.getElementById("percentValue").textContent=pct+"%";
+ document.getElementById("doneValue").textContent=done+"/"+total;
+ document.getElementById("taskCount").textContent=total+" actividades";
+ document.getElementById("streakValue").textContent=streak();
+ document.getElementById("dayStatus").textContent=dayData().type?"REGISTRADO":"EN CURSO";
+ document.getElementById("dailyBlocks").innerHTML=blocks.map((b,bi)=>`
+  <div class="block-title"><h2>${b.title}</h2><span class="tag">${b.time}</span></div>
+  <div class="card">
+   ${b.tasks.map((t,ti)=>{
+    const id=bi+"-"+ti,done=!!dayData().checks[id];
+    return `<label class="task ${done?"done":""}">
+     <input type="checkbox" ${done?"checked":""} onchange="toggleTask('${id}',this.checked)">
+     <span class="task-content">
+      <span class="task-name">${t[0]}</span>
+      <div class="task-desc">${t[1]}</div>
+      <div class="task-time">DURACIÓN ESTIMADA: ${t[2]}</div>
+     </span>
+    </label>`;
+   }).join("")}
+  </div>`).join("");
+ renderMissions();
 }
-
-function missionPool(day){
-  const priorities = [
-    {title:"Activa tu cuerpo",dimension:0,description:"Realiza movimiento físico durante al menos 15 minutos.",duration:"15 min",type:"Normal"},
-    {title:"Alimenta tu mente",dimension:1,description:"Dedica 15 minutos a leer, estudiar o aprender algo nuevo.",duration:"15 min",type:"Normal"},
-    {title:"Organiza tu día",dimension:3,description:"Define una acción concreta que acerque tu vida a tus objetivos.",duration:"10 min",type:"Micro"},
-    {title:"Cuida tu descanso",dimension:7,description:"Prepara una rutina que favorezca una noche de descanso.",duration:"10 min",type:"Micro"},
-    {title:"Cuida tu imagen",dimension:4,description:"Dedica tiempo consciente a tu presentación y cuidado personal.",duration:"10 min",type:"Micro"},
-    {title:"Conecta con alguien",dimension:5,description:"Ten una conversación significativa o fortalece un vínculo.",duration:"15 min",type:"Normal"},
-    {title:"Entrena tu calma",dimension:2,description:"Realiza una pausa consciente y reconoce cómo te sientes.",duration:"10 min",type:"Micro"},
-    {title:"Revisa tu propósito",dimension:6,description:"Reflexiona sobre qué estás construyendo y por qué.",duration:"10 min",type:"Micro"}
-  ];
-
-  const secondary = [
-    {title:"Aprende algo nuevo",description:"Explora un tema que te interese y toma una nota.",duration:"15 min"},
-    {title:"Ordena tu entorno",description:"Mejora un espacio pequeño de tu casa o lugar de trabajo.",duration:"10 min"},
-    {title:"Haz una pausa digital",description:"Aléjate de las distracciones durante un periodo consciente.",duration:"15 min"}
-  ];
-
-  const special = [
-    {title:"Desafío de valentía",description:"Haz algo importante que has estado posponiendo.",duration:"30 min"},
-    {title:"Desafío de conexión",description:"Busca una conversación que fortalezca una relación.",duration:"20 min"},
-    {title:"Desafío de aprendizaje",description:"Investiga un tema y explica lo aprendido con tus propias palabras.",duration:"30 min"}
-  ];
-
-  // Ordena las misiones según las dimensiones con menos actividad reciente.
-  const recent = Object.values(data.days).slice(-7);
-  const activity = dimensionNames.map((_,i)=>{
-    return recent.reduce((sum,d)=>sum+(d.completedDimensions?.includes(i)?1:0),0);
-  });
-
-  const ranked = [...priorities].sort((a,b)=>activity[a.dimension]-activity[b.dimension]);
-  const offset = Math.max(0,day-1)%ranked.length;
-  const ordered = [...ranked.slice(offset),...ranked.slice(0,offset)];
-
-  return {
-    priorities:ordered.slice(0,3),
-    secondary,
-    special:special[(Math.max(1,day)-1)%special.length]
-  };
+function toggleTask(id,checked){
+ if(dayData().type){alert("La jornada ya está registrada. No puedes modificar sus tareas.");renderToday();return;}
+ dayData().checks[id]=checked;save();renderToday();
 }
-
-function dayRecord(){
-  return data.days[currentDayKey()] || {completed:[],unlocked:0,secondaryDone:[],type:""};
+function renderMissions(){
+ const list=data.missions[today()]||[];
+ document.getElementById("missions").innerHTML=list.length?list.map((m,i)=>`
+  <label class="task ${m.done?"done":""}">
+   <input type="checkbox" ${m.done?"checked":""} onchange="toggleMission(${i},this.checked)">
+   <span class="task-content"><span class="task-name">${escapeHTML(m.text)}</span></span>
+   <button class="secondary" onclick="removeMission(${i});event.preventDefault()">×</button>
+  </label>`).join(""):`<p class="notice">Todavía no has añadido misiones adicionales.</p>`;
 }
-
-function renderMission(mission,index,kind){
-  const record=dayRecord();
-  const done = kind==="priority"
-    ? record.completed.includes(index)
-    : kind==="secondary"
-      ? record.secondaryDone.includes(index)
-      : record.specialDone===true;
-
-  return `
-    <div class="card mission ${done?"done":""}">
-      <div class="row">
-        <h3>${done?"✓ ":""}${mission.title}</h3>
-        <span class="tag">${mission.duration||"15 min"}</span>
-      </div>
-      <p>${mission.description}</p>
-      <div class="mission-actions">
-        ${done
-          ? `<button class="secondary" onclick="undoMission('${kind}',${index})">Deshacer</button>`
-          : `<button onclick="completeMission('${kind}',${index})">Completar</button>`}
-        ${kind!=="priority" ? "" : `<span class="tag">Prioritaria</span>`}
-      </div>
-    </div>`;
+function addMission(){
+ const input=document.getElementById("newMission"),text=input.value.trim();
+ if(!text)return;
+ const list=data.missions[today()]||[];
+ if(list.length>=3){alert("Puedes añadir hasta tres misiones adicionales.");return;}
+ list.push({text,done:false});data.missions[today()]=list;input.value="";save();renderMissions();
 }
-
-function render(){
-  const day=dayNumber();
-  const safeDay=Math.max(1,Math.min(90,day));
-  const phase=phaseInfo(safeDay);
-  const pool=missionPool(safeDay);
-  const record=dayRecord();
-
-  document.getElementById("dayTitle").textContent=`DÍA ${safeDay} DE 90`;
-  document.getElementById("phase").textContent=`FASE ${safeDay<=30?1:safeDay<=60?2:3} · ${phase.name}`;
-  document.getElementById("dateLabel").textContent=new Date().toLocaleDateString("es-CO",{weekday:"long",day:"numeric",month:"long"});
-  document.getElementById("phaseProgress").textContent=`${safeDay-phase.start+1} / 30`;
-  document.getElementById("dayProgress").style.width=`${safeDay/90*100}%`;
-  document.getElementById("streakValue").textContent=streakCount();
-  document.getElementById("streakBig").textContent=streakCount();
-  document.getElementById("daysValue").textContent=registeredDays();
-  document.getElementById("completedValue").textContent=`${record.completed.length}/3`;
-  document.getElementById("dayStatus").textContent=record.type ? "REGISTRADO" : "EN CURSO";
-  document.getElementById("closeDayButton").disabled=!!record.type;
-  document.getElementById("focusText").textContent=pool.priorities[0].title;
-
-  document.getElementById("priorityMissions").innerHTML=pool.priorities.map((m,i)=>renderMission(m,i,"priority")).join("");
-
-  const unlocked=Math.min(3,record.unlocked||0);
-  document.getElementById("secondaryCount").textContent=`${unlocked} disponibles`;
-  document.getElementById("secondaryMissions").innerHTML=pool.secondary.slice(0,unlocked).map((m,i)=>renderMission(m,i,"secondary")).join("") || `<p class="notice">Aún no hay misiones secundarias desbloqueadas.</p>`;
-  document.getElementById("unlockButton").disabled=unlocked>=3 || !!record.type;
-  document.getElementById("unlockButton").textContent=unlocked>=3?"Todas desbloqueadas":"Desbloquear siguiente misión";
-
-  const specialAvailable=safeDay>=7 && safeDay%7===0;
-  document.getElementById("specialCard").classList.toggle("hidden",!specialAvailable);
-  if(specialAvailable){
-    document.getElementById("specialMission").innerHTML=renderMission(pool.special,0,"special");
-    document.getElementById("specialText").textContent="Una misión especial para salir de tu zona de comodidad. Es opcional.";
-  }
-
-  renderDimensions();
-  renderHistory();
-  renderEvaluations();
-  document.getElementById("startDate").value=data.startDate;
-  document.getElementById("availableTime").value=data.availableTime;
-}
-
-function completeMission(kind,index){
-  const record=dayRecord();
-  if(record.type){alert("Esta jornada ya fue registrada.");return;}
-  if(kind==="priority" && !record.completed.includes(index)) record.completed.push(index);
-  if(kind==="secondary" && !record.secondaryDone.includes(index)) record.secondaryDone.push(index);
-  if(kind==="special") record.specialDone=true;
-  data.days[currentDayKey()]=record;
-  saveData();render();
-}
-
-function undoMission(kind,index){
-  const record=dayRecord();
-  if(record.type){alert("No puedes modificar una jornada ya registrada.");return;}
-  if(kind==="priority") record.completed=record.completed.filter(x=>x!==index);
-  if(kind==="secondary") record.secondaryDone=record.secondaryDone.filter(x=>x!==index);
-  if(kind==="special") record.specialDone=false;
-  data.days[currentDayKey()]=record;
-  saveData();render();
-}
-
-function unlockNext(){
-  const record=dayRecord();
-  if(record.type)return;
-  record.unlocked=Math.min(3,(record.unlocked||0)+1);
-  data.days[currentDayKey()]=record;
-  saveData();render();
-}
-
+function toggleMission(i,v){data.missions[today()][i].done=v;save();renderMissions();}
+function removeMission(i){data.missions[today()].splice(i,1);save();renderMissions();}
 function closeDay(){
-  const record=dayRecord();
-  if(record.type){alert("Esta jornada ya está registrada.");return;}
-  if(!confirm("¿Quieres registrar esta jornada tal como fue?"))return;
-  record.type="normal";
-  record.closedAt=new Date().toISOString();
-  data.days[currentDayKey()]=record;
-  saveData();render();
-  document.getElementById("closeMessage").textContent="Jornada registrada. Mañana tendrás una nueva oportunidad de avanzar.";
+ if(dayData().type){alert("La jornada ya está registrada.");return;}
+ if(!confirm("¿Registrar esta jornada?"))return;
+ dayData().type="normal";dayData().closedAt=new Date().toISOString();save();render();document.getElementById("closeMessage").textContent="Jornada registrada. Buen trabajo.";
 }
-
 function recoveryDay(){
-  const record=dayRecord();
-  if(record.type){alert("Esta jornada ya está registrada.");return;}
-  if(!confirm("¿Registrar hoy como día de recuperación?"))return;
-  record.type="recovery";
-  record.closedAt=new Date().toISOString();
-  data.days[currentDayKey()]=record;
-  saveData();render();
-  document.getElementById("closeMessage").textContent="Recuperar también es avanzar. Tu continuidad ha quedado registrada.";
+ if(dayData().type){alert("La jornada ya está registrada.");return;}
+ if(!confirm("¿Registrar hoy como día de recuperación?"))return;
+ dayData().type="recovery";dayData().closedAt=new Date().toISOString();save();render();document.getElementById("closeMessage").textContent="Día de recuperación registrado. Descansar también es avanzar.";
 }
-
-function showPage(id,button){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-  button.classList.add("active");
+function showPage(id,btn){
+ document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+ btn.classList.add("active");
+ if(id==="finanzas")renderFinance();
 }
-
+function money(n){return new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",maximumFractionDigits:0}).format(n||0);}
+function selectedMonth(){return document.getElementById("financeMonth").value||today().slice(0,7);}
+function renderFinance(){
+ const month=selectedMonth();
+ const movements=data.finance.movements.filter(x=>x.date.slice(0,7)===month);
+ const income=movements.filter(x=>x.type==="income").reduce((s,x)=>s+x.amount,0);
+ const expense=movements.filter(x=>x.type==="expense").reduce((s,x)=>s+x.amount,0);
+ document.getElementById("monthlyBalance").textContent=money(income-expense);
+ document.getElementById("monthlyBalance").className="money "+(income-expense>=0?"green":"red");
+ document.getElementById("incomeTotal").textContent=money(income);
+ document.getElementById("expenseTotal").textContent=money(expense);
+ document.getElementById("debtTotal").textContent=money(data.finance.debts.reduce((s,x)=>s+x.remaining,0));
+ document.getElementById("savingTotal").textContent=money(data.finance.goals.reduce((s,x)=>s+x.saved,0));
+ document.getElementById("movementCount").textContent=movements.length;
+ document.getElementById("movementList").innerHTML=movements.length?[...movements].reverse().map(x=>`
+  <div class="list-item row">
+   <div><strong>${escapeHTML(x.description)}</strong><div class="small muted">${x.date} · ${escapeHTML(x.category)}</div></div>
+   <div class="${x.type==="income"?"green":"red"}">${x.type==="income"?"+":"−"}${money(x.amount)}
+    <button class="secondary" onclick="deleteMovement('${x.id}')">×</button>
+   </div>
+  </div>`).join(""):"No hay movimientos para este mes.";
+ renderDebts();renderGoals();
+}
+function addMovement(){
+ const description=document.getElementById("movementDescription").value.trim();
+ const amount=Number(document.getElementById("movementAmount").value);
+ const date=document.getElementById("movementDate").value;
+ if(!description||!Number.isFinite(amount)||amount<=0||!date){alert("Completa descripción, valor y fecha.");return;}
+ data.finance.movements.push({id:crypto.randomUUID(),type:document.getElementById("movementType").value,description,amount,date,category:document.getElementById("movementCategory").value});
+ document.getElementById("movementDescription").value="";document.getElementById("movementAmount").value="";
+ save();renderFinance();
+}
+function deleteMovement(id){
+ if(!confirm("¿Eliminar este movimiento?"))return;
+ data.finance.movements=data.finance.movements.filter(x=>x.id!==id);save();renderFinance();
+}
+function addDebt(){
+ const name=document.getElementById("debtName").value.trim();
+ const amount=Number(document.getElementById("debtAmount").value);
+ const paid=Number(document.getElementById("debtPaid").value||0);
+ if(!name||amount<=0||paid<0||paid>amount){alert("Revisa el nombre y los valores de la deuda.");return;}
+ data.finance.debts.push({id:crypto.randomUUID(),name,total:amount,paid,remaining:amount-paid});
+ document.getElementById("debtName").value="";document.getElementById("debtAmount").value="";document.getElementById("debtPaid").value="";
+ save();renderFinance();
+}
+function renderDebts(){
+ const el=document.getElementById("debtList");
+ el.innerHTML=data.finance.debts.length?data.finance.debts.map(d=>`
+  <div class="list-item">
+   <div class="row"><strong>${escapeHTML(d.name)}</strong><strong class="orange">${money(d.remaining)}</strong></div>
+   <div class="small muted">Total: ${money(d.total)} · Abonado: ${money(d.paid)}</div>
+   <div class="progress"><span style="width:${d.total?d.paid/d.total*100:0}%"></span></div>
+   <div class="form-grid"><input type="number" min="1" id="pay-${d.id}" placeholder="Valor del abono"><button onclick="payDebt('${d.id}')">Registrar abono</button></div>
+   <button class="secondary" onclick="deleteDebt('${d.id}')">Eliminar deuda</button>
+  </div>`).join(""):"No tienes deudas registradas.";
+}
+function payDebt(id){
+ const d=data.finance.debts.find(x=>x.id===id),input=document.getElementById("pay-"+id),amount=Number(input.value);
+ if(!d||amount<=0||amount>d.remaining){alert("El abono debe ser mayor que cero y no superar la deuda pendiente.");return;}
+ d.paid+=amount;d.remaining-=amount;save();renderFinance();
+}
+function deleteDebt(id){
+ if(!confirm("¿Eliminar esta deuda?"))return;
+ data.finance.debts=data.finance.debts.filter(x=>x.id!==id);save();renderFinance();
+}
+function addGoal(){
+ const name=document.getElementById("goalName").value.trim();
+ const target=Number(document.getElementById("goalTarget").value);
+ const saved=Number(document.getElementById("goalSaved").value||0);
+ if(!name||target<=0||saved<0){alert("Revisa los datos de la meta.");return;}
+ data.finance.goals.push({id:crypto.randomUUID(),name,target,saved});
+ document.getElementById("goalName").value="";document.getElementById("goalTarget").value="";document.getElementById("goalSaved").value="";
+ save();renderFinance();
+}
+function renderGoals(){
+ document.getElementById("goalList").innerHTML=data.finance.goals.length?data.finance.goals.map(g=>`
+  <div class="list-item">
+   <div class="row"><strong>${escapeHTML(g.name)}</strong><strong class="green">${Math.min(100,g.saved/g.target*100).toFixed(0)}%</strong></div>
+   <div class="small muted">${money(g.saved)} de ${money(g.target)}</div>
+   <div class="progress"><span style="width:${Math.min(100,g.saved/g.target*100)}%"></span></div>
+   <div class="form-grid"><input type="number" min="1" id="save-${g.id}" placeholder="Añadir ahorro"><button onclick="addSaving('${g.id}')">Añadir ahorro</button></div>
+   <button class="secondary" onclick="deleteGoal('${g.id}')">Eliminar meta</button>
+  </div>`).join(""):"Todavía no has creado metas de ahorro.";
+}
+function addSaving(id){
+ const g=data.finance.goals.find(x=>x.id===id),amount=Number(document.getElementById("save-"+id).value);
+ if(!g||amount<=0){alert("Ingresa un valor válido.");return;}
+ g.saved+=amount;save();renderFinance();
+}
+function deleteGoal(id){
+ if(!confirm("¿Eliminar esta meta?"))return;
+ data.finance.goals=data.finance.goals.filter(x=>x.id!==id);save();renderFinance();
+}
 function renderDimensions(){
-  const list=document.getElementById("dimensionsList");
-  list.innerHTML=dimensionNames.map((name,i)=>{
-    const value=data.dimensions[i]?.score;
-    return `<div class="dimension"><span>${name}</span><span class="score">${value===undefined?"Sin evaluar":value+"/100"}</span></div>`;
-  }).join("");
-  document.getElementById("dimensionSelect").innerHTML=dimensionNames.map((name,i)=>`<option value="${i}">${name}</option>`).join("");
+ document.getElementById("dimensionSelect").innerHTML=dimensions.map((x,i)=>`<option value="${i}">${x}</option>`).join("");
+ document.getElementById("dimensionList").innerHTML=dimensions.map((x,i)=>`<div class="list-item row"><span>${x}</span><strong>${data.dimensions[i]?.score??"Sin evaluar"}${data.dimensions[i]?" / 100":""}</strong></div>`).join("");
 }
-
 function saveDimension(){
-  const i=Number(document.getElementById("dimensionSelect").value);
-  const score=Number(document.getElementById("dimensionScore").value);
-  if(!Number.isFinite(score)||score<0||score>100){alert("Ingresa un valor entre 0 y 100.");return;}
-  data.dimensions[i]={score,note:document.getElementById("dimensionNote").value,date:currentDayKey()};
-  saveData();render();
-  alert("Dimensión actualizada.");
+ const i=Number(document.getElementById("dimensionSelect").value),score=Number(document.getElementById("dimensionScore").value);
+ if(score<0||score>100){alert("Usa un valor entre 0 y 100.");return;}
+ data.dimensions[i]={score,note:document.getElementById("dimensionNote").value,date:today()};save();renderDimensions();alert("Dimensión actualizada.");
 }
-
 function renderHistory(){
-  const entries=Object.entries(data.days).sort((a,b)=>b[0].localeCompare(a[0]));
-  document.getElementById("historyList").innerHTML=entries.length
-    ? entries.slice(0,20).map(([date,d])=>`<div class="dimension"><span>${date}</span><span>${d.type==="recovery"?"Recuperación":"Jornada registrada"} · ${d.completed?.length||0}/3 prioritarias</span></div>`).join("")
-    : "Todavía no hay jornadas registradas.";
+ const entries=Object.entries(data.days).sort((a,b)=>b[0].localeCompare(a[0]));
+ document.getElementById("historyList").innerHTML=entries.length?entries.slice(0,30).map(([date,d])=>`<div class="list-item row"><span>${date}</span><span>${d.type==="recovery"?"Recuperación":"Jornada registrada"}</span></div>`).join(""):"Todavía no hay jornadas registradas.";
+ document.getElementById("streakBig").textContent=streak();
 }
-
-function evaluationScore(){
-  const h=Number(document.getElementById("evHabits").value);
-  const s=Number(document.getElementById("evStreak").value);
-  const m=Number(document.getElementById("evMissions").value);
-  const r=Number(document.getElementById("evResults").value);
-  const a=Number(document.getElementById("evSelf").value);
-  return h*.25+s*.20+m*.15+r*.30+a*.10;
+function score(){
+ return Number(document.getElementById("evHabits").value)*.25+
+ Number(document.getElementById("evStreak").value)*.20+
+ Number(document.getElementById("evMissions").value)*.15+
+ Number(document.getElementById("evResults").value)*.30+
+ Number(document.getElementById("evSelf").value)*.10;
 }
-
-function evaluationLevel(score){
-  if(score<20)return "CRÍTICO";
-  if(score<40)return "INICIAL";
-  if(score<60)return "EN DESARROLLO";
-  if(score<80)return "SÓLIDO";
-  return "FORTALECIDO";
-}
-
-function updateEvaluationPreview(){
-  const score=evaluationScore();
-  document.getElementById("evaluationResult").textContent=score.toFixed(1);
-  document.getElementById("evaluationLevel").textContent=evaluationLevel(score);
-}
-
-["evHabits","evStreak","evMissions","evResults","evSelf"].forEach(id=>{
-  document.getElementById(id).addEventListener("input",updateEvaluationPreview);
-});
-
+function level(s){return s<20?"CRÍTICO":s<40?"INICIAL":s<60?"EN DESARROLLO":s<80?"SÓLIDO":"FORTALECIDO";}
+function updateEvaluation(){const s=score();document.getElementById("evaluationResult").textContent=s.toFixed(1);document.getElementById("evaluationLevel").textContent=level(s);}
+["evHabits","evStreak","evMissions","evResults","evSelf"].forEach(id=>document.getElementById(id).addEventListener("input",updateEvaluation));
 function saveEvaluation(){
-  const fields=["evHabits","evStreak","evMissions","evResults","evSelf"];
-  const values=fields.map(id=>Number(document.getElementById(id).value));
-  if(values.some(v=>!Number.isFinite(v)||v<0||v>100)){alert("Todos los valores deben estar entre 0 y 100.");return;}
-  const score=evaluationScore();
-  data.evaluations.push({
-    stage:Number(document.getElementById("evaluationStage").value),
-    date:currentDayKey(),
-    score,
-    level:evaluationLevel(score),
-    confidence:document.getElementById("evConfidence").value,
-    evidence:document.getElementById("evEvidence").value,
-    values
-  });
-  saveData();renderEvaluations();
-  alert("Evaluación guardada.");
+ const vals=["evHabits","evStreak","evMissions","evResults","evSelf"].map(id=>Number(document.getElementById(id).value));
+ if(vals.some(x=>x<0||x>100)){alert("Los valores deben estar entre 0 y 100.");return;}
+ data.evaluations.push({stage:Number(document.getElementById("evaluationStage").value),date:today(),score:score(),level:level(score()),confidence:document.getElementById("evConfidence").value,evidence:document.getElementById("evEvidence").value});
+ save();renderEvaluations();alert("Evaluación guardada.");
 }
-
 function renderEvaluations(){
-  const el=document.getElementById("evaluationHistory");
-  el.innerHTML=data.evaluations.length
-    ? [...data.evaluations].reverse().map(e=>`<div class="dimension"><span>Día ${e.stage} · ${e.date}<br><small class="muted">${e.confidence} confianza</small></span><strong>${e.score.toFixed(1)} · ${e.level}</strong></div>`).join("")
-    : "Aún no hay evaluaciones guardadas.";
+ document.getElementById("evaluationHistory").innerHTML=data.evaluations.length?[...data.evaluations].reverse().map(e=>`<div class="list-item"><strong>Día ${e.stage} · ${e.date}</strong><br>${e.score.toFixed(1)} · ${e.level} · Confianza ${e.confidence}<p class="notice">${escapeHTML(e.evidence||"Sin evidencia escrita.")}</p></div>`).join(""):"Aún no hay evaluaciones.";
 }
-
-const noScrollItems=[
-  {title:"Una idea para pensar",body:"No confundas estar ocupado con estar avanzando. Pregúntate qué acción concreta de hoy tendrá valor dentro de un mes.",category:"REFLEXIÓN"},
-  {title:"Aprendizaje activo",body:"Elige un tema que quieras dominar. Dedica unos minutos a estudiarlo y después intenta explicarlo sin consultar tus apuntes.",category:"APRENDIZAJE"},
-  {title:"Conoce tus hábitos",body:"Identifica una conducta que te roba tiempo. No necesitas cambiar toda tu vida hoy: empieza por reconocer cuándo aparece.",category:"AUTOCONOCIMIENTO"},
-  {title:"Una acción pequeña",body:"Elige una tarea que llevas posponiendo. Divídela en un primer paso que puedas completar en menos de diez minutos.",category:"ACCIÓN"}
+const scrollItems=[
+ ["REFLEXIÓN","No confundas estar ocupado con avanzar. Elige una acción que pueda mejorar tu vida dentro de un mes."],
+ ["APRENDIZAJE","Aprende algo y luego intenta explicarlo con tus propias palabras sin mirar tus apuntes."],
+ ["AUTOCONOCIMIENTO","Identifica una conducta que te roba tiempo y reconoce cuándo aparece."],
+ ["ACCIÓN","Divide una tarea que has pospuesto en un primer paso de menos de diez minutos."]
 ];
-
-function startNoScroll(){
-  noScrollActive=true;
-  noScrollIndex=0;
-  if(noScrollTimer)clearTimeout(noScrollTimer);
-  showNoScrollItem();
-  document.getElementById("noScrollStatus").textContent="Sesión iniciada. Duración objetivo: 15 minutos.";
-  noScrollTimer=setTimeout(()=>finishNoScroll(),15*60*1000);
-}
-
-function showNoScrollItem(){
-  const item=noScrollItems[noScrollIndex%noScrollItems.length];
-  document.getElementById("noScrollContent").innerHTML=`
-    <div class="card no-scroll-card">
-      <span class="tag">${item.category}</span>
-      <div><h2>${item.title}</h2><p class="muted">${item.body}</p></div>
-      <div class="small muted">CONTENIDO ${noScrollIndex+1}</div>
-    </div>`;
-}
-
-function nextNoScroll(){
-  if(!noScrollActive){alert("Primero inicia tu sesión.");return;}
-  noScrollIndex++;
-  showNoScrollItem();
-}
-
-function finishNoScroll(){
-  if(!noScrollActive)return;
-  noScrollActive=false;
-  if(noScrollTimer)clearTimeout(noScrollTimer);
-  data.noScrollSessions++;
-  saveData();
-  document.getElementById("noScrollContent").innerHTML="";
-  document.getElementById("noScrollStatus").textContent="Sesión finalizada. Sesiones realizadas: "+data.noScrollSessions;
-}
-
+function startNoScroll(){scrollActive=true;scrollIndex=0;showScroll();document.getElementById("noScrollStatus").textContent="Sesión iniciada. Duración objetivo: 15 minutos.";if(scrollTimer)clearTimeout(scrollTimer);scrollTimer=setTimeout(finishNoScroll,900000);}
+function showScroll(){const x=scrollItems[scrollIndex%scrollItems.length];document.getElementById("noScrollContent").innerHTML=`<div class="card"><span class="tag">${x[0]}</span><h2 style="margin-top:15px">${x[1]}</h2><p class="notice">Contenido ${scrollIndex+1}</p></div>`;}
+function nextNoScroll(){if(!scrollActive){alert("Inicia primero la sesión.");return;}scrollIndex++;showScroll();}
+function finishNoScroll(){if(!scrollActive)return;scrollActive=false;clearTimeout(scrollTimer);data.noScrollSessions++;save();document.getElementById("noScrollContent").innerHTML="";document.getElementById("noScrollStatus").textContent="Sesión terminada. Sesiones: "+data.noScrollSessions;}
 function saveSettings(){
-  const date=document.getElementById("startDate").value;
-  if(!date){alert("Selecciona una fecha de inicio.");return;}
-  data.startDate=date;
-  data.availableTime=Number(document.getElementById("availableTime").value);
-  saveData();render();
-  alert("Configuración guardada.");
+ const date=document.getElementById("startDate").value;if(!date){alert("Selecciona una fecha.");return;}
+ data.startDate=date;data.availableTime=Number(document.getElementById("availableTime").value);save();render();alert("Configuración guardada.");
 }
-
 function exportData(){
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;a.download="prime-quest-backup.json";a.click();
-  URL.revokeObjectURL(url);
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="prime-quest-backup.json";a.click();URL.revokeObjectURL(url);
 }
-
 function importData(){
-  const file=document.getElementById("importFile").files[0];
-  if(!file){alert("Selecciona un archivo JSON.");return;}
-  const reader=new FileReader();
-  reader.onload=()=>{
-    try{
-      const imported=JSON.parse(reader.result);
-      if(!imported.startDate||!imported.days||!imported.dimensions)throw new Error();
-      if(!confirm("¿Reemplazar los datos actuales por esta copia?"))return;
-      data={...structuredClone(initialData),...imported};
-      saveData();render();
-      alert("Copia restaurada.");
-    }catch(e){alert("El archivo no parece ser una copia válida de PRIME QUEST.");}
-  };
-  reader.readAsText(file);
+ const f=document.getElementById("importFile").files[0];if(!f){alert("Selecciona un archivo.");return;}
+ const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.startDate||!x.finance||!x.days)throw Error();if(!confirm("¿Reemplazar tus datos actuales?"))return;data={...structuredClone(initial),...x};save();render();alert("Copia restaurada.");}catch(e){alert("Archivo no válido.");}};r.readAsText(f);
 }
-
-function resetData(){
-  if(!confirm("¿Seguro que quieres borrar todo tu progreso?"))return;
-  if(!confirm("Esta acción no se puede deshacer. ¿Continuar?"))return;
-  localStorage.removeItem(STORAGE_KEY);
-  data=structuredClone(initialData);
-  saveData();render();
+function resetData(){if(!confirm("¿Borrar todo tu progreso y tus datos financieros?"))return;if(!confirm("Esta acción no se puede deshacer. ¿Continuar?"))return;localStorage.removeItem(KEY);data=structuredClone(initial);save();render();}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function render(){
+ renderToday();renderDimensions();renderHistory();renderEvaluations();renderFinance();
+ document.getElementById("startDate").value=data.startDate;
+ document.getElementById("availableTime").value=data.availableTime;
 }
-
-if("serviceWorker" in navigator){
-  window.addEventListener("load",()=>{
-    navigator.serviceWorker.register("./sw.js").catch(()=>{});
-  });
-}
-
-render();
-updateEvaluationPreview();
+document.getElementById("financeMonth").value=today().slice(0,7);
+document.getElementById("financeMonth").addEventListener("change",renderFinance);
+document.getElementById("movementDate").value=today();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
+render();updateEvaluation();
 </script>
 </body>
 </html>
