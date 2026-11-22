@@ -1,73 +1,798 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080d18"><link rel="manifest" href="manifest.json"><title>MI PRIME V3</title><style>
-:root{--bg:#080d18;--p:#111d30;--l:#293c56;--c:#5ce1e6;--t:#edf4ff;--m:#9aacc4}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:15px system-ui}.wrap{max-width:1050px;margin:auto;padding:18px 15px 100px}.top,.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.brand{font-weight:900;letter-spacing:4px}.brand span{color:var(--c)}.muted,.small{color:var(--m)}.small{font-size:12px}.hero,.card{background:linear-gradient(145deg,#142943,#101a2a);border:1px solid var(--l);border-radius:18px;padding:17px;margin:12px 0}.hero h1{font-size:clamp(28px,5vw,42px);margin:8px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}.kpi{background:#0b1727;border:1px solid var(--l);border-radius:12px;padding:12px}.kpi b{font-size:23px;display:block}.btn{background:linear-gradient(120deg,var(--c),#669dff);color:#07111d;border:0;border-radius:10px;padding:10px 14px;font-weight:800}.secondary{background:#1b2b42;color:var(--t);border:1px solid var(--l)}button{cursor:pointer}.nav{position:fixed;bottom:0;left:0;right:0;background:#0b1423f2;display:flex;overflow:auto;gap:3px;padding:8px;z-index:5;border-top:1px solid var(--l)}.nav button{background:none;color:var(--m);border:0;padding:8px;min-width:62px;font-size:11px}.nav button b{display:block;font-size:18px}.nav .active{color:var(--c);background:#183047;border-radius:9px}.view{display:none}.view.active{display:block}.field{margin:10px 0}.field label{display:block;color:var(--m);font-size:12px;margin-bottom:4px}.field input,.field textarea,.field select{width:100%;padding:10px;background:#091525;border:1px solid var(--l);border-radius:9px;color:var(--t)}textarea{min-height:85px}.item{border-bottom:1px solid var(--l);padding:10px 0}.tag{border:1px solid var(--l);border-radius:30px;padding:4px 9px;color:var(--c);font-size:11px}.ns-card{min-height:58vh;background:radial-gradient(circle at 80% 10%,#234767,#101a2a 55%,#091321);border:1px solid var(--l);border-radius:20px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;touch-action:pan-y}.ns-actions{display:flex;gap:8px;justify-content:space-around;flex-wrap:wrap}.ns-actions button{min-width:54px}.ns-dot{height:5px;background:#263c56;border-radius:10px;overflow:hidden}.ns-dot i{display:block;height:100%;background:var(--c)}.notice{background:#122b3d;padding:12px;border-left:3px solid var(--c);border-radius:8px}.warn{background:#382b19;padding:12px;border-left:3px solid #ffc66d;border-radius:8px}.modal{display:none;position:fixed;inset:0;background:#000b;z-index:10;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.box{background:#111d30;border:1px solid var(--l);border-radius:16px;padding:18px;width:100%;max-width:600px;max-height:90vh;overflow:auto}.hidden{display:none!important}.progress{height:8px;background:#253850;border-radius:20px}.progress i{display:block;height:100%;background:var(--c);border-radius:20px}.toast{display:none;position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#174158;padding:10px;border-radius:10px;z-index:20}@media(min-width:800px){.nav{top:85px;bottom:auto;left:calc(50% - 525px);right:auto;width:100px;display:block;border:1px solid var(--l);border-radius:12px}.nav button{width:100%}.wrap{padding-left:125px}}
-</style></head><body><div class="wrap"><header class="top"><div><div class="brand">MI <span>PRIME</span></div><div class="small">TU TRANSFORMACIÓN · 90 DÍAS</div></div><span id="cloudState" class="tag">Guardado local</span></header>
-<section id="welcome" class="hero"><span class="tag">PRIME V3 · NUEVA VERSIÓN</span><h1>Tu mejor versión se construye día a día.</h1><p class="muted">Entrenamiento, alimentación, cuidado personal, conocimiento, finanzas y atención. Tu progreso no desaparece cuando pierdes una racha.</p><button class="btn" onclick="onboard()">Crear mi perfil PRIME</button><p class="small">V3 independiente. La V2 no se modifica.</p></section>
-<main id="app" class="hidden"><section class="hero"><div class="row"><div><span id="phase" class="tag">FASE 1 · FUNDAMENTOS</span><h1 id="hello">Construye tu PRIME.</h1><div class="small" id="dayText">Día 1 de 90</div></div><div class="kpi"><span class="small">RACHA</span><b id="streak">0 días</b><span class="small" id="best">Récord 0</span></div></div><div class="progress"><i id="bar" style="width:0%"></i></div></section>
-<section id="home" class="view active"><div class="grid"><div class="kpi">Días cerrados<b id="closed">0</b></div><div class="kpi">Consistencia<b id="consistency">0%</b></div><div class="kpi">Próxima evaluación<b id="next">Día 30</b></div></div><div class="card"><h2>Compromisos de hoy</h2><div class="field"><label>Tipo de día</label><select id="daytype" onchange="draw()"><option value="normal">Normal</option><option value="football">Fútbol</option><option value="training">Entrenamiento</option><option value="recovery">Recuperación</option></select></div><div id="tasks"></div><button class="btn" onclick="closeDay()">Cerrar día y registrar racha</button><p class="small">Tres compromisos esenciales adaptados al tipo de día. Un día perdido no borra tus avances.</p></div><div class="card"><h2>Registro rápido</h2><textarea id="quick" placeholder="Ej. Anoche jugué fútbol, pagué cancha, parqueadero, tomé 5 cervezas y comí 4 empanadas..."></textarea><button class="btn" onclick="quickSave()">Guardar en PRIME JOURNAL</button></div></section>
-<section id="profile" class="view"><div class="card"><h2>PRIME PROFILE</h2><div id="profileData"></div><button class="btn" onclick="editProfile()">Editar perfil</button> <button class="btn secondary" onclick="measure()">Registrar medidas</button><button class="btn secondary" onclick="evaluate()">Evaluación 30/60/90</button></div><div class="card"><h2>Mediciones corporales</h2><p class="small">Días 1, 30, 60 y 90. Repite el mismo método y condiciones.</p><div id="measures"></div></div><div class="card"><h2>PRIME ID · Respaldo</h2><div id="account"></div><button class="btn" onclick="cloud()">Configurar sincronización</button> <button class="btn secondary" onclick="backup()">Exportar respaldo</button><label class="btn secondary">Importar respaldo<input hidden type="file" accept="application/json" onchange="restore(event)"></label></div></section>
-<section id="body" class="view"><div class="card"><h2>PRIME BODY</h2><div id="training"></div></div><div class="card"><h2>PRIME NUTRITION</h2><div id="nutrition"></div></div><div class="card"><h2>Registrar alimentos</h2><textarea id="food" placeholder="¿Qué comiste y bebiste? Incluye cantidades y preparación."></textarea><div class="field"><select id="meal"><option>Desayuno</option><option>Almuerzo</option><option>Cena</option><option>Merienda</option><option>Después del fútbol/entrenamiento</option></select></div><button class="btn" onclick="foodSave()">Analizar y guardar</button><div id="foodResult"></div></div><div class="card"><h2>Suplementación</h2><div id="supp"></div></div></section>
-<section id="care" class="view"><div class="card"><h2>PRIME CARE · Piel y cuidado personal</h2><div id="skinPlan"></div><button class="btn" onclick="skinEval()">Evaluación de piel</button></div><div class="card"><h2>Rutina</h2><div id="skinRoutine"></div></div><div class="card"><h2>Productos recomendados por función</h2><div id="products"></div></div><div class="card"><h2>Higiene y presentación</h2><p>Higiene dental, cuidado del cabello, uñas, aseo y presentación personal. Crea hábitos diarios y revisiones semanales.</p></div></section>
-<section id="finance" class="view"><div class="card"><h2>PRIME FINANCE · Solo finanzas personales</h2><p class="small">Ingresos, gastos, deudas, abonos y ahorro. Sin contabilidad de negocios en esta versión.</p><div class="grid"><div class="kpi">Ingresos mes<b id="inc">$0</b></div><div class="kpi">Gastos mes<b id="out">$0</b></div><div class="kpi">Balance<b id="bal">$0</b></div><div class="kpi">Deuda total<b id="debtTotal">$0</b></div></div><button class="btn" onclick="transaction('income')">+ Ingreso</button> <button class="btn secondary" onclick="transaction('expense')">+ Gasto</button> <button class="btn secondary" onclick="debt()">+ Deuda</button><div id="tx"></div></div><div class="card"><h2>Deudas y abonos</h2><div id="debts"></div></div></section>
-<section id="noScroll" class="view"><div class="card"><div class="row"><div><span class="tag">MI PRIME · NO SCROLL</span><h2>Sal del scroll. Entra en algo nuevo.</h2><p class="muted">Noticias, retos mentales, aprendizaje y curiosidades. Tú decides qué merece tu atención.</p></div><div class="kpi"><span class="small">SESIÓN</span><b id="nsCount">0</b><span class="small">contenidos vistos</span></div></div><div class="grid"><button class="btn" onclick="startNoScroll('surprise')">✦ Sorpréndeme</button><button class="btn secondary" onclick="startNoScroll('quick')">⚡ Tengo poco tiempo</button></div><div class="field"><label>O elige una categoría</label><div class="grid"><button class="btn secondary" onclick="startNoScroll('juegos')">🧩 Juegos mentales</button><button class="btn secondary" onclick="startNoScroll('noticias')">📰 Noticias</button><button class="btn secondary" onclick="startNoScroll('aprendizaje')">📚 Aprendizaje</button><button class="btn secondary" onclick="startNoScroll('curiosidades')">🌌 Curiosidades</button></div></div><div class="notice">La sesión habitual dura unos 15 minutos. El modo rápido muestra contenidos de máximo 30 segundos. Puedes pasar cualquier publicación inmediatamente.</div></div><div id="nsExperience" class="hidden"><div class="row"><span id="nsMode" class="tag">SORPRESA Y VARIEDAD</span><span id="nsPosition" class="small">1 / 1</span><button class="btn secondary" onclick="endNoScroll()">Terminar</button></div><div class="ns-dot"><i id="nsProgress" style="width:0%"></i></div><article id="nsCard" class="ns-card"><div><span id="nsCategory" class="tag">CURIOSIDAD</span><h2 id="nsTitle"></h2><p id="nsBody"></p></div><div><p id="nsQuestion" class="notice"></p><div class="ns-actions"><button class="btn secondary" onclick="nsLike()">♡ Me gusta</button><button class="btn secondary" onclick="nsSave()">▣ Guardar</button><button class="btn secondary" onclick="nsExplain()">＋ Explícame más</button><button class="btn secondary" onclick="nsSkip(true)">No me interesa</button><button class="btn" onclick="nsSkip(false)">Siguiente ↑</button></div></div></article><p class="small">Desliza hacia arriba para pasar al siguiente contenido. Un solo deslizamiento, sin feed infinito.</p></div><div class="card"><h3>Mi biblioteca NO SCROLL</h3><div id="nsLibrary"></div><h3>Tu actividad</h3><div id="nsStats" class="small"></div></div></section>
-<section id="daily" class="view"><div class="card"><h2>PRIME DAILY · Alimenta tu mente</h2><p>Lecturas para sustituir el uso automático de redes mientras esperas, almuerzas o descansas.</p><div class="row"><button class="btn secondary" onclick="read('quick')">2 minutos</button><button class="btn secondary" onclick="read('full')">5–10 minutos</button><button class="btn secondary" onclick="read('deep')">Inmersión</button></div><div id="reading"></div><div class="notice">Noticias importantes del día: para no inventar actualidad, la aplicación permite guardar titulares, resumen, fecha y enlace de fuentes. La conexión automática a noticias en vivo se añadirá cuando integremos una fuente gratuita fiable.</div><button class="btn secondary" onclick="newsAdd()">Guardar noticia y fuente</button><div id="news"></div><h3>Mi biblioteca</h3><div id="library"></div></div></section>
-<section id="digital" class="view"><div class="card"><h2>DIGITAL CONTROL</h2><p>Registra el reporte diario de Tiempo en pantalla del iPhone.</p><div class="field"><label>Tiempo total (minutos)</label><input id="stotal" type="number"></div><div class="field"><label>Redes sociales (minutos)</label><input id="ssocial" type="number"></div><div class="field"><label>Entretenimiento/videojuegos (minutos)</label><input id="sfun" type="number"></div><div class="field"><label>Productividad/aprendizaje (minutos)</label><input id="swork" type="number"></div><div class="field"><label>Nota</label><input id="snote"></div><button class="btn" onclick="screenSave()">Guardar reporte</button><p class="small">Puedes adjuntar la captura como referencia en el teléfono, pero esta versión registra los valores manualmente y no lee automáticamente la imagen ni sincroniza fotos.</p><div id="screens"></div></div></section>
-<section id="journal" class="view"><div class="card"><h2>PRIME JOURNAL · Bitácora</h2><textarea id="journalText" placeholder="Registra comida, alcohol, entrenamiento, descanso, gastos, ánimo o cualquier experiencia."></textarea><div class="field"><select id="jcat"><option>General</option><option>Alimentación</option><option>Alcohol</option><option>Entrenamiento</option><option>Descanso</option><option>Finanzas</option><option>Estado de ánimo</option><option>Productividad</option></select></div><button class="btn" onclick="journalSave()">Guardar</button><div id="journalList"></div></div></section>
-<section id="rest" class="view"><div class="card"><h2>PRIME REST</h2><div class="field"><label>Horas de sueño</label><input id="sleepHours" type="number" step=".25"></div><div class="field"><label>Calidad</label><select id="sleepQuality"><option>Buena</option><option>Regular</option><option>Mala</option></select></div><div class="field"><label>Energía (1–5)</label><select id="energy"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div><button class="btn" onclick="restSave()">Guardar descanso</button><div id="restList"></div></div></section>
-<section id="progress" class="view"><div class="card"><h2>PRIME PROGRESS</h2><div id="progressData"></div></div><div class="card"><h2>Evaluaciones</h2><div id="evaluations"></div></div></section>
-</main></div><nav class="nav" id="nav"><button class="active" onclick="go('home',this)"><b>⌂</b>Hoy</button><button onclick="go('profile',this)"><b>◉</b>Perfil</button><button onclick="go('body',this)"><b>✦</b>Cuerpo</button><button onclick="go('care',this)"><b>♡</b>Cuidado</button><button onclick="go('finance',this)"><b>＄</b>Finanzas</button><button onclick="go('noScroll',this)"><b>↟</b>NO SCROLL</button><button onclick="go('daily',this)"><b>▤</b>Daily</button><button onclick="go('digital',this)"><b>◷</b>Digital</button><button onclick="go('journal',this)"><b>✎</b>Diario</button><button onclick="go('rest',this)"><b>☾</b>Descanso</button><button onclick="go('progress',this)"><b>↗</b>Progreso</button></nav><div id="modal" class="modal"><div class="box"><div class="row"><h2 id="mtitle">Registro</h2><button class="btn secondary" onclick="closeModal()">Cerrar</button></div><div id="mbody"></div><button id="msave" class="btn">Guardar</button></div></div><div id="toast" class="toast"></div>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1020">
+<meta name="description" content="PRIME QUEST: convierte tu vida en un videojuego de evolución personal.">
+<link rel="manifest" href="./manifest.json">
+<title>PRIME QUEST</title>
+
+<style>
+:root {
+  --bg:#0b1020;
+  --panel:#141c30;
+  --panel2:#1b2740;
+  --text:#f2f5ff;
+  --muted:#9ba8c2;
+  --accent:#8b7cff;
+  --green:#4dd6a0;
+  --orange:#ffbd69;
+  --red:#ff7272;
+  --border:#293550;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+}
+button,input,select,textarea {font:inherit}
+button {
+  border:0;
+  cursor:pointer;
+  border-radius:12px;
+  padding:11px 15px;
+  background:var(--accent);
+  color:white;
+  font-weight:650;
+}
+button.secondary {background:var(--panel2);border:1px solid var(--border)}
+button.success {background:#176c54}
+button.danger {background:#773d49}
+button:disabled {opacity:.4;cursor:not-allowed}
+header {
+  padding:22px 18px 12px;
+  max-width:900px;
+  margin:auto;
+}
+.brand {font-size:13px;letter-spacing:3px;color:var(--accent);font-weight:800}
+h1 {margin:5px 0;font-size:29px;letter-spacing:1px}
+.subtitle {color:var(--muted);font-size:13px}
+main {max-width:900px;margin:auto;padding:12px 16px 100px}
+nav {
+  position:fixed;
+  z-index:5;
+  bottom:0;left:0;right:0;
+  display:flex;
+  justify-content:center;
+  background:#10182aee;
+  border-top:1px solid var(--border);
+  padding:9px 4px calc(9px + env(safe-area-inset-bottom));
+  backdrop-filter:blur(15px);
+}
+nav button {
+  flex:1;max-width:130px;
+  padding:9px 2px;
+  font-size:11px;
+  background:transparent;
+  color:var(--muted);
+}
+nav button.active {color:white;background:var(--panel2)}
+.page {display:none}
+.page.active {display:block}
+.card {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:17px;
+  padding:17px;
+  margin-bottom:13px;
+}
+.card h2,.card h3 {margin:0 0 10px}
+.card h2 {font-size:18px}
+.card h3 {font-size:15px}
+.muted {color:var(--muted)}
+.small {font-size:12px}
+.row {display:flex;align-items:center;justify-content:space-between;gap:10px}
+.progress {
+  height:9px;background:#27334c;border-radius:20px;overflow:hidden;margin:12px 0;
+}
+.progress span {display:block;height:100%;background:var(--accent);border-radius:20px}
+.tag {
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  background:var(--panel2);
+  color:#c7c2ff;
+  font-size:11px;
+  margin:3px 3px 3px 0;
+}
+.mission {border-left:3px solid var(--accent)}
+.mission.done {border-left-color:var(--green);opacity:.7}
+.mission p {font-size:13px;color:var(--muted);margin:6px 0 12px}
+.mission button {font-size:12px;padding:8px 11px}
+.mission-actions {display:flex;gap:7px;flex-wrap:wrap}
+.stat {
+  background:var(--panel2);
+  padding:13px;
+  border-radius:13px;
+  flex:1;
+  min-width:90px;
+}
+.stat strong {display:block;font-size:23px}
+.stat span {font-size:11px;color:var(--muted)}
+.stats {display:flex;gap:9px;flex-wrap:wrap}
+input,select,textarea {
+  width:100%;
+  padding:11px;
+  color:var(--text);
+  background:#0d1527;
+  border:1px solid var(--border);
+  border-radius:10px;
+  margin:6px 0 12px;
+}
+label {font-size:12px;color:var(--muted)}
+.dimension {
+  display:flex;justify-content:space-between;align-items:center;
+  padding:13px 0;border-bottom:1px solid var(--border);
+}
+.dimension:last-child {border:0}
+.score {color:var(--accent);font-weight:800}
+.notice {font-size:12px;color:var(--muted);line-height:1.6}
+.big-number {font-size:42px;font-weight:850;color:var(--green)}
+.no-scroll-card {
+  min-height:230px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  background:linear-gradient(145deg,#202b49,#141c30);
+}
+.no-scroll-card h2 {font-size:23px}
+.hidden {display:none!important}
+hr {border:0;border-top:1px solid var(--border);margin:16px 0}
+@media(min-width:650px) {
+  main {padding-top:20px}
+  .grid2 {display:grid;grid-template-columns:1fr 1fr;gap:12px}
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="brand">YOUR PERSONAL EVOLUTION SYSTEM</div>
+  <h1>PRIME QUEST</h1>
+  <div class="subtitle">MISSION SYSTEM V1.0 · 90 DAYS</div>
+</header>
+
+<main>
+
+<!-- HOY -->
+<section id="hoy" class="page active">
+  <div class="card">
+    <div class="row">
+      <div>
+        <div class="muted small" id="phase">FASE 1 · FUNDAMENTOS</div>
+        <h2 id="dayTitle">DÍA 1 DE 90</h2>
+      </div>
+      <span class="tag" id="dayStatus">EN CURSO</span>
+    </div>
+    <div class="progress"><span id="dayProgress" style="width:1%"></span></div>
+    <div class="row small muted">
+      <span id="dateLabel"></span>
+      <span id="phaseProgress">1 / 30</span>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><strong id="streakValue">0</strong><span>RACHA ACTUAL</span></div>
+    <div class="stat"><strong id="completedValue">0/3</strong><span>PRIORITARIAS</span></div>
+    <div class="stat"><strong id="daysValue">0</strong><span>DÍAS REGISTRADOS</span></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h2>Tu enfoque de hoy</h2>
+    <p class="muted small">No necesitas hacerlo todo. Necesitas avanzar de forma consistente.</p>
+    <div id="focusText"></div>
+  </div>
+
+  <h2>Misiones prioritarias</h2>
+  <p class="muted small">Tus tres compromisos principales del día.</p>
+  <div id="priorityMissions"></div>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <h2>Misiones secundarias</h2>
+        <div class="muted small">Se desbloquean progresivamente.</div>
+      </div>
+      <span class="tag" id="secondaryCount">0 disponibles</span>
+    </div>
+    <div id="secondaryMissions"></div>
+    <button class="secondary" id="unlockButton" onclick="unlockNext()">Desbloquear siguiente misión</button>
+  </div>
+
+  <div class="card" id="specialCard">
+    <h2>✨ Misión especial</h2>
+    <p class="muted small" id="specialText">Las misiones especiales aparecen ocasionalmente según tu evolución.</p>
+    <div id="specialMission"></div>
+  </div>
+
+  <div class="card">
+    <h2>Cerrar jornada</h2>
+    <p class="muted small">Registrar el día no significa que todo haya salido perfecto. Significa reconocer honestamente cómo avanzaste.</p>
+    <button class="success" id="closeDayButton" onclick="closeDay()">Registrar mi día</button>
+    <button class="secondary" onclick="recoveryDay()">Registrar día de recuperación</button>
+    <p id="closeMessage" class="notice"></p>
+  </div>
+</section>
+
+<!-- DIMENSIONES -->
+<section id="dimensiones" class="page">
+  <div class="card">
+    <h2>Tus ocho dimensiones</h2>
+    <p class="muted small">Tu evolución no depende de una sola área de tu vida.</p>
+    <div id="dimensionsList"></div>
+  </div>
+  <div class="card">
+    <h2>Actualizar una dimensión</h2>
+    <label>Dimensión</label>
+    <select id="dimensionSelect"></select>
+    <label>¿Cómo está actualmente esta área? (0–100)</label>
+    <input id="dimensionScore" type="number" min="0" max="100" value="50">
+    <label>Observación o evidencia</label>
+    <textarea id="dimensionNote" rows="3" placeholder="¿Qué ha cambiado? ¿Qué necesitas mejorar?"></textarea>
+    <button onclick="saveDimension()">Guardar evaluación</button>
+  </div>
+</section>
+
+<!-- RACHA -->
+<section id="racha" class="page">
+  <div class="card">
+    <div class="muted small">TU CONSISTENCIA</div>
+    <div class="big-number" id="streakBig">0</div>
+    <h2>días de racha</h2>
+    <p class="muted small">La racha representa continuidad, no perfección. Un día difícil no borra tu progreso anterior.</p>
+  </div>
+  <div class="card">
+    <h2>Reglas de RACHA</h2>
+    <p class="notice">
+      • Un día registrado como jornada normal cuenta para la continuidad.<br>
+      • Un día de recuperación también cuenta como continuidad consciente.<br>
+      • Un día sin registro no suma a la racha.<br>
+      • No se suman varios días por registrar repetidamente la misma jornada.<br>
+      • Puedes retomar después de una interrupción sin empezar tu transformación desde cero.
+    </p>
+  </div>
+  <div class="card">
+    <h2>Tu historial</h2>
+    <div id="historyList" class="notice">Todavía no hay jornadas registradas.</div>
+  </div>
+</section>
+
+<!-- EVALUACIÓN -->
+<section id="evaluacion" class="page">
+  <div class="card">
+    <h2>Evaluación de evolución</h2>
+    <p class="muted small">La meta es medir cambios reales, no solamente tareas completadas.</p>
+    <div class="tag">DÍA 0 · 30 · 60 · 90</div>
+    <label>Etapa de evaluación</label>
+    <select id="evaluationStage">
+      <option value="0">Día 0 · Punto de partida</option>
+      <option value="30">Día 30 · Fundamentos</option>
+      <option value="60">Día 60 · Evolución</option>
+      <option value="90">Día 90 · Consolidación</option>
+    </select>
+    <label>Hábitos (25%)</label>
+    <input type="number" id="evHabits" min="0" max="100" value="50">
+    <label>Consistencia y RACHA (20%)</label>
+    <input type="number" id="evStreak" min="0" max="100" value="50">
+    <label>Misiones completadas (15%)</label>
+    <input type="number" id="evMissions" min="0" max="100" value="50">
+    <label>Resultados observables (30%)</label>
+    <input type="number" id="evResults" min="0" max="100" value="50">
+    <label>Autoevaluación (10%)</label>
+    <input type="number" id="evSelf" min="0" max="100" value="50">
+    <label>¿Qué evidencia demuestra tu evolución?</label>
+    <textarea id="evEvidence" rows="3" placeholder="Describe cambios concretos, no solamente intenciones."></textarea>
+    <label>Confianza en esta evaluación</label>
+    <select id="evConfidence">
+      <option value="Alta">Alta · Tengo evidencia clara</option>
+      <option value="Media" selected>Media · Tengo algunas evidencias</option>
+      <option value="Baja">Baja · Es principalmente una percepción</option>
+    </select>
+    <button onclick="saveEvaluation()">Guardar evaluación</button>
+  </div>
+  <div class="card">
+    <h2>Resultado ponderado</h2>
+    <div class="big-number" id="evaluationResult">50</div>
+    <div id="evaluationLevel">EN DESARROLLO</div>
+    <p class="notice">Este indicador es orientativo. No reemplaza la evidencia real de tu evolución.</p>
+  </div>
+  <div class="card">
+    <h2>Evaluaciones anteriores</h2>
+    <div id="evaluationHistory" class="notice">Aún no hay evaluaciones guardadas.</div>
+  </div>
+</section>
+
+<!-- NO SCROLL -->
+<section id="noscroll" class="page">
+  <div class="card">
+    <div class="row">
+      <div>
+        <div class="brand">MODO NO SCROLL</div>
+        <h2>15 minutos para ti</h2>
+      </div>
+      <span class="tag">MODO MIXTO</span>
+    </div>
+    <p class="muted small">Descubre contenido seleccionado para aprender, reflexionar y crecer. Desliza verticalmente o pasa inmediatamente lo que no te interese.</p>
+    <button onclick="startNoScroll()">Comenzar sesión</button>
+    <button class="secondary" onclick="nextNoScroll()">Saltar contenido</button>
+  </div>
+  <div id="noScrollContent"></div>
+  <div class="row">
+    <button class="secondary" onclick="nextNoScroll()">Siguiente ↓</button>
+    <button onclick="finishNoScroll()">Terminar sesión</button>
+  </div>
+  <p class="notice" id="noScrollStatus">Tu sesión aún no ha comenzado.</p>
+</section>
+
+<!-- AJUSTES -->
+<section id="ajustes" class="page">
+  <div class="card">
+    <h2>Configuración de PRIME QUEST</h2>
+    <label>Fecha de inicio del desafío</label>
+    <input type="date" id="startDate">
+    <button onclick="saveSettings()">Guardar configuración</button>
+    <hr>
+    <h3>Disponibilidad diaria</h3>
+    <label>Tiempo que normalmente puedes dedicar</label>
+    <select id="availableTime">
+      <option value="15">15 minutos</option>
+      <option value="30">30 minutos</option>
+      <option value="60" selected>1 hora</option>
+      <option value="120">2 horas</option>
+      <option value="180">Más de 2 horas</option>
+    </select>
+    <button onclick="saveSettings()">Actualizar disponibilidad</button>
+  </div>
+  <div class="card">
+    <h2>Tus datos</h2>
+    <p class="notice">Tu información se guarda en este dispositivo. Exporta periódicamente una copia de seguridad.</p>
+    <button onclick="exportData()">Exportar copia de seguridad</button>
+    <label>Restaurar copia de seguridad</label>
+    <input type="file" id="importFile" accept=".json,application/json">
+    <button class="secondary" onclick="importData()">Importar datos</button>
+  </div>
+  <div class="card">
+    <h2>Reiniciar proyecto</h2>
+    <p class="notice">Esta acción elimina los datos guardados en este dispositivo. Exporta una copia antes de continuar.</p>
+    <button class="danger" onclick="resetData()">Reiniciar PRIME QUEST</button>
+  </div>
+</section>
+
+</main>
+
+<nav>
+  <button class="active" onclick="showPage('hoy',this)">⌂<br>Hoy</button>
+  <button onclick="showPage('dimensiones',this)">◈<br>Áreas</button>
+  <button onclick="showPage('racha',this)">🔥<br>Racha</button>
+  <button onclick="showPage('evaluacion',this)">◎<br>Evaluación</button>
+  <button onclick="showPage('noscroll',this)">↓<br>No Scroll</button>
+  <button onclick="showPage('ajustes',this)">⚙<br>Ajustes</button>
+</nav>
+
 <script>
-const KEY='mi_prime_v3';const fresh=()=>({profile:null,day:1,streak:0,best:0,closed:[],tasks:{},measures:[],evaluations:[],foods:[],tx:[],debts:[],journal:[],screens:[],rests:[],skin:null,library:[],news:[],nsLibrary:[],nsStats:{seen:0,liked:0,skipped:0,sessions:0},nsCurrent:0});let d={...fresh(),...JSON.parse(localStorage.getItem(KEY)||'{}')};let fbUser=null;
-const $=id=>document.getElementById(id),today=()=>new Date().toISOString().slice(0,10),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),money=n=>new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(n||0),save=()=>{localStorage.setItem(KEY,JSON.stringify(d));render();};
-function toast(t){$('toast').textContent=t;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2200)}
-function go(v,b){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$(v).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b?.classList.add('active');render()}
-function modal(title,body,fn){$('mtitle').textContent=title;$('mbody').innerHTML=body;$('msave').onclick=fn;$('modal').classList.add('show')}function closeModal(){$('modal').classList.remove('show')}
-function onboard(){profileModal()}
-function profileModal(){let p=d.profile||{};modal('Crear / editar PRIME PROFILE',`<div class="field"><label>Nombre o apodo</label><input id="pname" value="${esc(p.name||'')}"></div><div class="row"><div class="field"><label>Edad</label><input id="page" type="number" value="${p.age||''}"></div><div class="field"><label>Sexo fisiológico (opcional)</label><select id="psex"><option value="">No indicar</option><option ${p.sex==='hombre'?'selected':''}>hombre</option><option ${p.sex==='mujer'?'selected':''}>mujer</option></select></div></div><div class="row"><div class="field"><label>Estatura cm</label><input id="ph" type="number" value="${p.height||''}"></div><div class="field"><label>Peso kg</label><input id="pw" type="number" step=".1" value="${p.weight||''}"></div></div><div class="field"><label>Objetivo</label><select id="pgoal">${['Ganar masa muscular','Perder grasa','Recomposición corporal','Mejorar condición física','Transformación integral'].map(x=>`<option ${p.goal===x?'selected':''}>${x}</option>`)}</select></div><div class="field"><label>Experiencia</label><select id="plevel"><option>Principiante</option><option>Intermedio</option><option>Avanzado</option></select></div><div class="field"><label>Días disponibles para entrenar</label><select id="pdays">${[2,3,4,5,6].map(x=>`<option ${p.days==x?'selected':''}>${x}</option>`)}</select></div><div class="field"><label>Días de fútbol</label><input id="pfootball" value="${esc(p.football||'')}" placeholder="Ej. martes y jueves"></div><div class="field"><label>Presupuesto semanal alimentación COP</label><input id="pbudget" type="number" value="${p.budget||''}"></div><div class="field"><label>Lesiones, alergias, restricciones o condiciones relevantes</label><textarea id="plimits">${esc(p.limits||'')}</textarea></div><div class="field"><label>Tipo de piel</label><select id="pskin"><option>No lo sé</option><option>Grasa</option><option>Seca</option><option>Mixta</option><option>Normal</option><option>Sensible</option></select></div><div class="field"><label>Necesidades de piel</label><input id="pskinneed" value="${esc(p.skinNeed||'')}"></div><div class="field"><label>Horas de sueño habituales</label><input id="psleep" value="${esc(p.sleep||'')}"></div><div class="field"><label>Minutos disponibles por entrenamiento</label><input id="pminutes" type="number" value="${p.minutes||45}"></div>`,()=>{d.profile={name:$('pname').value,age:+$('page').value||null,sex:$('psex').value,height:+$('ph').value||null,weight:+$('pw').value||null,goal:$('pgoal').value,level:$('plevel').value,days:+$('pdays').value,football:$('pfootball').value,budget:+$('pbudget').value||null,limits:$('plimits').value,skin:$('pskin').value,skinNeed:$('pskinneed').value,sleep:$('psleep').value,minutes:+$('pminutes').value||45};if(!d.measures.length)d.measures.push({date:today(),day:1,weight:d.profile.weight,source:'Peso del perfil'});closeModal();save();toast('Perfil guardado')})}
-function measure(){modal('Medidas corporales',`<div class="notice">Registra siempre en condiciones similares. El porcentaje de grasa necesita medición externa; MI PRIME no puede hacer un examen físico por sí sola.</div>${[['weight','Peso kg'],['armRelax','Brazo relajado cm'],['armFlex','Brazo contraído cm'],['waist','Cintura cm'],['chest','Pecho cm'],['hip','Cadera cm'],['thigh','Muslo cm'],['calf','Pantorrilla cm'],['fat','Grasa corporal %']].map(([k,l])=>`<div class="field"><label>${l}</label><input id="m${k}" type="number" step=".1"></div>`).join('')}<div class="field"><label>Método de grasa</label><select id="mmethod"><option>No medido</option><option>Bioimpedancia</option><option>Pliegues cutáneos</option><option>DEXA</option><option>Estimación</option></select></div>`,()=>{let o={date:today(),day:d.day,method:$('mmethod').value};['weight','armRelax','armFlex','waist','chest','hip','thigh','calf','fat'].forEach(k=>o[k]=+$('m'+k).value||null);d.measures.push(o);closeModal();save()})}
-function evaluate(){modal('Evaluación PRIME',`<p class="muted">Califica del 1 al 10 tu situación actual.</p>${['Físico','Disciplina','Alimentación','Cuidado personal','Mente y aprendizaje','Productividad','Descanso','Finanzas'].map((x,i)=>`<div class="field"><label>${x}</label><input id="e${i}" type="number" min="1" max="10" value="5"></div>`).join('')}<textarea id="enote" placeholder="Qué mejoró y qué falta..."></textarea>`,()=>{d.evaluations.push({date:today(),day:d.day,values:Array.from({length:8},(_,i)=>+$('e'+i).value),note:$('enote').value});closeModal();save()})}
-function tasks(){let t=$('daytype')?.value||'normal';return t==='football'?['Jugar fútbol con criterio y preparación','Hidratarme y alimentarme adecuadamente','Priorizar recuperación después del partido']:t==='training'?['Completar entrenamiento adaptado','Alimentarme e hidratarme','Realizar recuperación']:t==='recovery'?['Respetar descanso o recuperación activa','Mantener alimentación e hidratación','Priorizar sueño y bienestar']:['Realizar higiene y cuidado personal','Cumplir una prioridad importante','Dedicar tiempo a movimiento o actividad saludable']}
-function draw(){let a=d.tasks[today()]||[];$('tasks').innerHTML=tasks().map((x,i)=>`<div class="item"><label><input type="checkbox" ${a.includes(i)?'checked':''} onchange="task(${i},this.checked)"> ${x}</label></div>`).join('')}
-window.task=(i,v)=>{let a=d.tasks[today()]||[];d.tasks[today()]=v?[...new Set([...a,i])]:a.filter(x=>x!==i);save()}
-function closeDay(){if((d.tasks[today()]||[]).length<3)return toast('Completa los tres compromisos');if(!d.closed.includes(today())){d.closed.push(today());d.streak++;d.best=Math.max(d.best,d.streak);d.day=Math.min(90,d.day+1);save();toast('Día cerrado. ¡Buen trabajo!')}else toast('Día ya cerrado')}
-function quickSave(){let t=$('quick').value.trim();if(!t)return;d.journal.push({date:today(),category:'General',text:t});$('quick').value='';save();toast('Guardado en PRIME JOURNAL')}
-function foodSave(){let t=$('food').value.trim();if(!t)return;d.foods.push({date:today(),meal:$('meal').value,text:t});d.journal.push({date:today(),category:'Alimentación',text:t});$('foodResult').innerHTML=`<div class="notice"><b>Registro guardado.</b><p>${esc(t)}</p>La revisión inicial es orientativa: describe cantidades, preparación y bebidas para evaluar mejor. Si hubo alcohol o frituras, evita compensar saltándote comidas; vuelve a una comida equilibrada, agua, verduras y proteína.</div>`;$('food').value='';save()}
-function skinEval(){modal('Evaluación de piel',`<div class="field"><label>Tipo de piel</label><select id="sType"><option>Grasa</option><option>Seca</option><option>Mixta</option><option>Normal</option><option>Sensible</option><option>No lo sé</option></select></div><div class="field"><label>Necesidad principal</label><select id="sNeed"><option>Acné</option><option>Manchas</option><option>Resequedad</option><option>Grasa/brillo</option><option>Irritación</option><option>Cuidado general</option></select></div><div class="field"><label>Alergias/productos irritantes</label><input id="sAllergy"></div><div class="field"><label>Productos actuales</label><textarea id="sCurrent"></textarea></div>`,()=>{d.skin={type:$('sType').value,need:$('sNeed').value,allergy:$('sAllergy').value,current:$('sCurrent').value};closeModal();save()})}
-function tx(type){modal(type==='income'?'Registrar ingreso':'Registrar gasto',`<div class="field"><label>Concepto</label><input id="tname"></div><div class="field"><label>Valor COP</label><input id="tvalue" type="number"></div><div class="field"><label>Categoría</label><select id="tcat">${(type==='income'?['Sueldo','Trabajo independiente','Otros']:['Alimentación','Vivienda','Transporte','Deporte y recreación','Alcohol','Salud','Cuidado personal','Servicios','Deudas','Otros']).map(x=>`<option>${x}</option>`)}</select></div><div class="field"><label>Fecha</label><input id="tdate" type="date" value="${today()}"></div>`,()=>{if(+$('tvalue').value<=0)return;d.tx.push({type,name:$('tname').value,value:+$('tvalue').value,cat:$('tcat').value,date:$('tdate').value});closeModal();save()})}
-function debt(){modal('Registrar deuda',`<div class="field"><label>Acreedor / nombre</label><input id="dname"></div><div class="field"><label>Saldo COP</label><input id="dvalue" type="number"></div><div class="field"><label>Interés mensual % (si lo conoces)</label><input id="drate" type="number" step=".01"></div><div class="field"><label>Vencimiento</label><input id="ddue" type="date"></div>`,()=>{d.debts.push({name:$('dname').value,value:+$('dvalue').value,rate:+$('drate').value||0,due:$('ddue').value,paid:0});closeModal();save()})}
-function read(k){let a={quick:['¿Por qué el cielo es azul?','La atmósfera dispersa más las longitudes de onda cortas de la luz solar, especialmente el azul. Por eso el cielo se ve azul durante el día.','La luz cambia de comportamiento al atravesar un medio.'],full:['Interés compuesto: aliado del ahorro y riesgo de la deuda','Los rendimientos se suman al capital y pueden generar nuevos rendimientos. En una deuda, los intereses acumulados también pueden hacer crecer el saldo. El tiempo y la tasa son determinantes.','Pregunta: ¿por qué conviene conocer la tasa efectiva de una deuda?'],deep:['Sueño, memoria y recuperación','Durante el sueño el cerebro consolida aprendizajes y participa en procesos de regulación y recuperación. Mantener horarios regulares, recibir luz natural durante el día y reducir estímulos antes de dormir puede ayudar. Las necesidades de sueño varían entre personas.','Reto: registra una semana de sueño y energía.']}[k];$('reading').innerHTML=`<div class="card"><span class="tag">LECTURA ${k==='quick'?'2 MIN':k==='full'?'5–10 MIN':'PROFUNDA'}</span><h3>${a[0]}</h3><p>${a[1]}</p><b>${a[2]}</b><p><button class="btn secondary" onclick="saveRead('${a[0].replace(/'/g,'')}')">Guardar en biblioteca</button></p></div>`}
-function saveRead(t){d.library.push({date:today(),title:t});save()}
-function newsAdd(){modal('Guardar noticia actual',`<div class="field"><label>Titular</label><input id="ntitle"></div><div class="field"><label>Resumen / contexto</label><textarea id="nsummary"></textarea></div><div class="field"><label>Fuente URL</label><input id="nurl"></div><div class="field"><label>Fecha publicación</label><input id="ndate" type="date" value="${today()}"></div>`,()=>{d.news.push({title:$('ntitle').value,summary:$('nsummary').value,url:$('nurl').value,date:$('ndate').value});closeModal();save()})}
-function screenSave(){d.screens.push({date:today(),total:+$('stotal').value||0,social:+$('ssocial').value||0,fun:+$('sfun').value||0,work:+$('swork').value||0,note:$('snote').value});save()}
-function journalSave(){let t=$('journalText').value.trim();if(!t)return;d.journal.push({date:today(),category:$('jcat').value,text:t});$('journalText').value='';save()}
-function restSave(){d.rests.push({date:today(),hours:+$('sleepHours').value,quality:$('sleepQuality').value,energy:$('energy').value});save()}
-function backup(){let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));a.href=u;a.download='mi-prime-respaldo-'+today()+'.json';a.click();URL.revokeObjectURL(u)}
-function restore(e){let f=e.target.files[0],r=new FileReader();r.onload=()=>{try{d={...fresh(),...JSON.parse(r.result)};save();toast('Respaldo restaurado')}catch{toast('Archivo inválido')}};r.readAsText(f)}
-function cloud(){modal('Activar PRIME ID en nube',`<div class="notice">La integración Firebase necesita tu propio proyecto gratuito. Esta versión guarda localmente y exporta respaldos; la sincronización automática no está activa hasta pegar la configuración Firebase en index.html.</div><ol><li>Crear proyecto en Firebase Console.</li><li>Activar Authentication con correo y contraseña.</li><li>Crear Firestore Database.</li><li>Aplicar reglas privadas por UID.</li><li>Pegar configuración web y publicar de nuevo.</li></ol><a href="https://console.firebase.google.com/" target="_blank">Abrir Firebase Console</a><p class="small">No actives facturación. Firebase gratuito tiene límites y las imágenes requieren almacenamiento aparte.</p>`,closeModal)}
-const nsItems=[
-{cat:'JUEGO MENTAL',key:'juegos',time:25,title:'El reto de las tres cajas',body:'Tienes tres cajas: una contiene solo manzanas, otra solo naranjas y otra una mezcla. Todas las etiquetas están equivocadas. Puedes sacar una sola fruta de una caja. ¿De cuál debes sacar para identificar correctamente las tres?',q:'Pista: empieza por la caja etiquetada “mezcla”.',more:'Como todas las etiquetas son incorrectas, la caja marcada “mezcla” no puede contener mezcla. La fruta que extraigas revela si contiene solo manzanas o solo naranjas; con esa información puedes deducir las otras dos.'},
-{cat:'APRENDIZAJE',key:'aprendizaje',time:30,title:'¿Qué es el interés compuesto?',body:'Es el efecto de generar rendimientos sobre el capital inicial y también sobre los rendimientos que ya se acumularon. En una deuda, el mismo mecanismo puede jugar en tu contra si los intereses se capitalizan.',q:'Pregunta: ¿por qué importa tanto el tiempo cuando ahorras o debes dinero?',more:'Porque el crecimiento se acumula periodo tras periodo. Por eso conviene comparar tasas efectivas, plazos, costos y frecuencia de capitalización, no solo mirar la cuota mensual.'},
-{cat:'CURIOSIDAD',key:'curiosidades',time:20,title:'Los pulpos tienen tres corazones',body:'Dos corazones bombean sangre hacia las branquias y el tercero la envía al resto del cuerpo. Su sangre contiene hemocianina, una molécula con cobre que ayuda a transportar oxígeno.',q:'Dato extra: la sangre puede verse azulada por la hemocianina.',more:'La hemocianina transporta oxígeno y funciona de manera distinta a la hemoglobina rica en hierro de nuestra sangre. Es una adaptación útil en ambientes marinos.'},
-{cat:'JUEGO MENTAL',key:'juegos',time:20,title:'Secuencia numérica',body:'Completa la secuencia: 2, 6, 12, 20, 30, ¿…?',q:'Piensa en cuánto aumenta cada número.',more:'La respuesta es 42. Las diferencias son 4, 6, 8, 10 y luego 12. También puede verse como n × (n+1): 1×2, 2×3, 3×4 y así sucesivamente.'},
-{cat:'APRENDIZAJE',key:'aprendizaje',time:30,title:'Una regla útil para aprender',body:'Recordar mejora cuando intentas recuperar la información sin mirar tus apuntes. Después compruebas qué acertaste y qué necesitas repasar.',q:'Prueba: cierra esta tarjeta e intenta explicar la idea con tus propias palabras.',more:'Esta práctica se conoce como recuperación activa. Puedes usar preguntas cortas, tarjetas de memoria o explicarle un concepto a otra persona.'},
-{cat:'CURIOSIDAD',key:'curiosidades',time:25,title:'Un día en Venus',body:'Venus gira tan lentamente sobre su eje que una rotación completa dura más que su año: tarda más en girar una vez que en completar una órbita alrededor del Sol.',q:'En Venus, el día sideral dura aproximadamente 243 días terrestres y el año unos 225.',more:'Además, Venus rota en sentido retrógrado respecto a la mayoría de los planetas. Por eso el Sol saldría por el oeste y se pondría por el este.'},
-{cat:'NOTICIAS',key:'noticias',time:30,title:'Noticias con contexto, no solo titulares',body:'Esta sección está preparada para mostrar noticias verificadas con fecha, medio y enlace original. En esta versión de prueba no hay conexión automática a noticias en vivo.',q:'Cuando integremos una fuente, cada noticia tendrá fecha de publicación y vínculo para verificarla.',more:'No presentaremos titulares inventados ni información antigua como si fuera actual. Por ahora, puedes consultar y guardar noticias desde PRIME DAILY.'}
-];let nsDeck=[],nsIndex=0,nsMode='surprise',nsStart=0,nsTouchY=0;
-function startNoScroll(mode){nsMode=mode;let pool=mode==='quick'?nsItems.filter(x=>x.time<=30):mode==='surprise'?nsItems.slice():nsItems.filter(x=>x.key===mode);nsDeck=pool.slice();if(mode==='surprise'||mode==='quick')nsDeck.sort(()=>Math.random()-.5);nsIndex=0;nsStart=Date.now();$('nsExperience').classList.remove('hidden');$('nsMode').textContent=mode==='quick'?'MODO RÁPIDO · ≤30 SEGUNDOS':mode==='surprise'?'SORPRESA Y VARIEDAD':mode.toUpperCase();showNs();}
-function showNs(){if(nsIndex>=nsDeck.length){endNoScroll();return}let x=nsDeck[nsIndex];$('nsCategory').textContent=x.cat;$('nsTitle').textContent=x.title;$('nsBody').textContent=x.body;$('nsQuestion').textContent=x.q;$('nsPosition').textContent=(nsIndex+1)+' / '+nsDeck.length;$('nsProgress').style.width=((nsIndex+1)/nsDeck.length*100)+'%';d.nsStats.seen++;saveNs();}
-function saveNs(){localStorage.setItem(KEY,JSON.stringify(d));$('nsCount').textContent=nsIndex+1;$('nsStats').textContent=`Contenidos vistos: ${d.nsStats.seen} · Me gusta: ${d.nsStats.liked} · Pasados: ${d.nsStats.skipped} · Sesiones: ${d.nsStats.sessions}`;$('nsLibrary').innerHTML=(d.nsLibrary||[]).slice().reverse().map(x=>`<div class="item"><b>${esc(x.title)}</b><p class="small">${esc(x.cat)} · ${x.date}</p><p>${esc(x.body)}</p></div>`).join('')||'Todavía no has guardado contenidos.';}
-function nsLike(){d.nsStats.liked++;toast('Interés registrado');saveNs()}
-function nsSave(){let x=nsDeck[nsIndex];if(!d.nsLibrary.some(y=>y.title===x.title)){d.nsLibrary.push({...x,date:today()});toast('Guardado en tu biblioteca')}else toast('Ya está en tu biblioteca');saveNs()}
-function nsExplain(){let x=nsDeck[nsIndex];$('nsBody').textContent=x.body+'\n\n'+x.more;$('nsQuestion').textContent='Explicación ampliada';}
-function nsSkip(notInterested){if(notInterested)d.nsStats.skipped++;nsIndex++;if(nsIndex>=nsDeck.length){endNoScroll();return}showNs()}
-function endNoScroll(){if(nsDeck.length){d.nsStats.sessions++;saveNs()}$('nsExperience').classList.add('hidden');toast('Sesión NO SCROLL terminada')}
-const nsCardEl=$('nsCard');nsCardEl?.addEventListener('touchstart',e=>{nsTouchY=e.changedTouches[0].screenY},{passive:true});nsCardEl?.addEventListener('touchend',e=>{let delta=nsTouchY-e.changedTouches[0].screenY;if(delta>55)nsSkip(false);else if(delta< -55)nsIndex=Math.max(0,nsIndex-1),showNs()},{passive:true});
-function render(){if(!d.profile){$('welcome').classList.remove('hidden');$('app').classList.add('hidden');return}$('welcome').classList.add('hidden');$('app').classList.remove('hidden');$('hello').textContent='Vamos, '+(d.profile.name||'construye tu PRIME')+'.';$('dayText').textContent=`Día ${d.day} de 90`;$('phase').textContent=d.day<=30?'FASE 1 · FUNDAMENTOS':d.day<=60?'FASE 2 · CONSOLIDACIÓN':'FASE 3 · AUTONOMÍA';$('streak').textContent=d.streak+' días';$('best').textContent='Récord '+d.best;$('bar').style.width=(d.day/90*100)+'%';$('closed').textContent=d.closed.length;$('consistency').textContent=Math.round(d.closed.length/Math.max(1,d.day)*100)+'%';$('next').textContent=d.day<30?'Día 30':d.day<60?'Día 60':d.day<90?'Día 90':'Final';draw();
-$('profileData').innerHTML=`<p>Edad: ${d.profile.age||'—'} · Estatura: ${d.profile.height||'—'} cm · Peso: ${d.profile.weight||'—'} kg</p><p>Objetivo: ${esc(d.profile.goal)} · Nivel: ${esc(d.profile.level)} · Días de entrenamiento: ${d.profile.days}</p><p>Fútbol: ${esc(d.profile.football||'No indicado')} · Piel: ${esc(d.profile.skin||'No indicada')} · Restricciones: ${esc(d.profile.limits||'Ninguna indicada')}</p>`;$('measures').innerHTML=d.measures.slice().reverse().map(m=>`<div class="item">${m.date} · Día ${m.day||'—'} · Peso ${m.weight||'—'} kg · Brazo ${m.armRelax||'—'} cm · Cintura ${m.waist||'—'} cm · Grasa ${m.fat||'—'}% · ${m.method||''}</div>`).join('')||'Sin medidas registradas.';$('account').innerHTML='Perfil local creado. Sincronización cloud pendiente de configurar.';
-let p=d.profile,prot=p.weight?Math.round(p.weight*(p.goal.includes('masa')||p.goal.includes('Recomposición')?1.6:1.2)):'completar peso';$('training').innerHTML=`<div class="notice">Objetivo: ${esc(p.goal)}. Experiencia ${esc(p.level)}. Plan inicial prudente: 2–3 sesiones de fuerza según nivel y disponibilidad, fútbol integrado como carga cardiovascular y 1–2 días de recuperación. Ajustar por lesiones, fatiga y equipamiento.</div><p>Rutina progresiva: movimientos básicos de empuje, tracción, piernas y core; comenzar con técnica y volumen moderado. La app debe ampliar el plan cuando registres equipo, lesiones y experiencia detallada.</p>`;$('nutrition').innerHTML=`<p>Proteína orientativa inicial: <b>${prot} g/día</b>. Rango general usado en adultos activos: 1,2–2,0 g/kg/día, individualizar por salud y objetivo. Prioriza huevos, lácteos, pollo, pescado, carnes, legumbres y tofu.</p><p>Las calorías requieren edad, estatura, peso, sexo fisiológico opcional y nivel de actividad completos; se ajustan con la evolución y no son diagnóstico.</p>`;$('supp').innerHTML=`<div class="item"><b>Proteína en polvo:</b> comodidad si no alcanzas proteína con comida; no es obligatoria.</div><div class="item"><b>Creatina monohidratada:</b> puede ayudar en fuerza y esfuerzos repetidos de alta intensidad; revisar antecedentes y contraindicaciones antes de usar.</div><div class="item"><b>Vitamina D, omega-3 y cafeína:</b> valorar solo si existe una razón individual. No comprar suplementos por defecto.</div><div class="warn">En enfermedad renal, embarazo, medicación o condiciones médicas, consultar antes de suplementar.</div>`;
-let sk=d.skin||{type:p.skin,need:p.skinNeed};$('skinPlan').innerHTML=`Tipo de piel: ${esc(sk.type||'por evaluar')} · Necesidad: ${esc(sk.need||'por evaluar')}`;$('skinRoutine').innerHTML='<b>Mañana:</b> limpiador suave, hidratante según necesidad y protector solar amplio espectro SPF 30–50. <br><b>Noche:</b> limpieza e hidratante; añadir un activo solo según necesidad y de forma gradual.';$('products').innerHTML='<div class="item"><b>Limpiador:</b> suave, adecuado a piel grasa, seca o sensible.</div><div class="item"><b>Hidratante:</b> glicerina y ceramidas; textura ligera si hay grasa.</div><div class="item"><b>Protector solar:</b> amplio espectro SPF 30 o superior.</div><div class="item"><b>Activos opcionales:</b> niacinamida, ácido salicílico o retinoides según necesidad y tolerancia. Evitar varios activos nuevos a la vez.</div><div class="warn">Acné severo, irritación persistente, alergias o manchas cambiantes requieren valoración dermatológica.</div>';
-let month=today().slice(0,7),tx=d.tx.filter(x=>x.date?.startsWith(month)),inc=tx.filter(x=>x.type==='income').reduce((s,x)=>s+x.value,0),out=tx.filter(x=>x.type==='expense').reduce((s,x)=>s+x.value,0);$('inc').textContent=money(inc);$('out').textContent=money(out);$('bal').textContent=money(inc-out);$('debtTotal').textContent=money(d.debts.reduce((s,x)=>s+x.value-(x.paid||0),0));$('tx').innerHTML=d.tx.slice().reverse().map(x=>`<div class="item">${esc(x.date)} · ${esc(x.name)} · ${x.type==='income'?'+':'−'}${money(x.value)} · ${esc(x.cat)}</div>`).join('');$('debts').innerHTML=d.debts.map((x,i)=>`<div class="item"><b>${esc(x.name)} · ${money(x.value-(x.paid||0))}</b><p class="small">Interés ${x.rate||0}% mensual · vence ${x.due||'—'}</p><button class="btn secondary" onclick="pay(${i})">Registrar abono</button></div>`).join('')||'Sin deudas registradas.';
-$('news').innerHTML=d.news.slice().reverse().map(n=>`<div class="item"><b>${esc(n.title)}</b><p>${esc(n.summary)}</p><small>${esc(n.date)} · <a href="${esc(n.url)}" target="_blank">Fuente</a></small></div>`).join('');$('library').innerHTML=d.library.slice().reverse().map(x=>`<div class="item">${esc(x.title)} · ${x.date}</div>`).join('');$('screens').innerHTML=d.screens.slice().reverse().map(x=>`<div class="item">${x.date} · Total ${x.total} min · Redes ${x.social} · Ocio ${x.fun} · Productividad ${x.work}</div>`).join('');$('journalList').innerHTML=d.journal.slice().reverse().map(x=>`<div class="item"><b>${x.date} · ${esc(x.category)}</b><p>${esc(x.text)}</p></div>`).join('');$('restList').innerHTML=d.rests.slice().reverse().map(x=>`<div class="item">${x.date} · ${x.hours} h · ${x.quality} · Energía ${x.energy}/5</div>`).join('');$('progressData').innerHTML=`Días cerrados ${d.closed.length}/90 · Racha ${d.streak} · Récord ${d.best}<p>Comidas ${d.foods.length} · gastos/ingresos ${d.tx.length} · lecturas ${d.library.length} · registros de pantalla ${d.screens.length}</p>`;saveNs();$('evaluations').innerHTML=d.evaluations.map(x=>`<div class="item">Día ${x.day} · ${x.date} · puntuaciones ${x.values.join(' / ')}<p>${esc(x.note)}</p></div>`).join('')||'Sin evaluaciones.'}
-window.go=go;window.onboard=onboard;window.editProfile=profileModal;window.measure=measure;window.evaluate=evaluate;window.closeModal=closeModal;window.closeDay=closeDay;window.foodSave=foodSave;window.skinEval=skinEval;window.transaction=tx;window.debt=debt;window.read=read;window.newsAdd=newsAdd;window.screenSave=screenSave;window.journalSave=journalSave;window.restSave=restSave;window.backup=backup;window.restore=restore;window.cloud=cloud;window.pay=i=>{let v=+prompt('Valor del abono COP');if(v>0){d.debts[i].paid=(d.debts[i].paid||0)+v;d.tx.push({type:'expense',name:'Abono '+d.debts[i].name,value:v,cat:'Deudas',date:today()});save()}};window.saveRead=saveRead;window.startNoScroll=startNoScroll;window.endNoScroll=endNoScroll;window.nsLike=nsLike;window.nsSave=nsSave;window.nsExplain=nsExplain;window.nsSkip=nsSkip;
+const STORAGE_KEY = "primeQuestMissionV1";
+
+const dimensionNames = [
+  "Físico",
+  "Intelectual",
+  "Mental y emocional",
+  "Profesional y económico",
+  "Imagen y cuidado personal",
+  "Social",
+  "Propósito y valores",
+  "Descanso y recuperación"
+];
+
+const initialData = {
+  startDate: new Date().toISOString().slice(0,10),
+  availableTime:60,
+  days:{},
+  dimensions:{},
+  evaluations:[],
+  noScrollSessions:0,
+  secondaryUnlocked:{}
+};
+
+let data = loadData();
+let noScrollIndex = 0;
+let noScrollActive = false;
+let noScrollTimer = null;
+
+function loadData(){
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return saved ? {...structuredClone(initialData),...saved} : structuredClone(initialData);
+  } catch(e) {
+    return structuredClone(initialData);
+  }
+}
+
+function saveData(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+}
+
+function localDate(date=new Date()){
+  const y=date.getFullYear();
+  const m=String(date.getMonth()+1).padStart(2,"0");
+  const d=String(date.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
+
+function dayNumber(){
+  const start = new Date(data.startDate+"T12:00:00");
+  const today = new Date(localDate()+"T12:00:00");
+  return Math.floor((today-start)/86400000)+1;
+}
+
+function phaseInfo(day){
+  if(day<=30) return {name:"FUNDAMENTOS",start:1};
+  if(day<=60) return {name:"EVOLUCIÓN",start:31};
+  return {name:"CONSOLIDACIÓN",start:61};
+}
+
+function currentDayKey(){
+  return localDate();
+}
+
+function streakCount(){
+  let count=0;
+  let date=new Date();
+  const today=localDate(date);
+  if(!data.days[today]){
+    date.setDate(date.getDate()-1);
+  }
+  while(true){
+    const key=localDate(date);
+    if(!data.days[key] || !["normal","recovery"].includes(data.days[key].type)) break;
+    count++;
+    date.setDate(date.getDate()-1);
+  }
+  return count;
+}
+
+function registeredDays(){
+  return Object.values(data.days).filter(d=>["normal","recovery"].includes(d.type)).length;
+}
+
+function missionPool(day){
+  const priorities = [
+    {title:"Activa tu cuerpo",dimension:0,description:"Realiza movimiento físico durante al menos 15 minutos.",duration:"15 min",type:"Normal"},
+    {title:"Alimenta tu mente",dimension:1,description:"Dedica 15 minutos a leer, estudiar o aprender algo nuevo.",duration:"15 min",type:"Normal"},
+    {title:"Organiza tu día",dimension:3,description:"Define una acción concreta que acerque tu vida a tus objetivos.",duration:"10 min",type:"Micro"},
+    {title:"Cuida tu descanso",dimension:7,description:"Prepara una rutina que favorezca una noche de descanso.",duration:"10 min",type:"Micro"},
+    {title:"Cuida tu imagen",dimension:4,description:"Dedica tiempo consciente a tu presentación y cuidado personal.",duration:"10 min",type:"Micro"},
+    {title:"Conecta con alguien",dimension:5,description:"Ten una conversación significativa o fortalece un vínculo.",duration:"15 min",type:"Normal"},
+    {title:"Entrena tu calma",dimension:2,description:"Realiza una pausa consciente y reconoce cómo te sientes.",duration:"10 min",type:"Micro"},
+    {title:"Revisa tu propósito",dimension:6,description:"Reflexiona sobre qué estás construyendo y por qué.",duration:"10 min",type:"Micro"}
+  ];
+
+  const secondary = [
+    {title:"Aprende algo nuevo",description:"Explora un tema que te interese y toma una nota.",duration:"15 min"},
+    {title:"Ordena tu entorno",description:"Mejora un espacio pequeño de tu casa o lugar de trabajo.",duration:"10 min"},
+    {title:"Haz una pausa digital",description:"Aléjate de las distracciones durante un periodo consciente.",duration:"15 min"}
+  ];
+
+  const special = [
+    {title:"Desafío de valentía",description:"Haz algo importante que has estado posponiendo.",duration:"30 min"},
+    {title:"Desafío de conexión",description:"Busca una conversación que fortalezca una relación.",duration:"20 min"},
+    {title:"Desafío de aprendizaje",description:"Investiga un tema y explica lo aprendido con tus propias palabras.",duration:"30 min"}
+  ];
+
+  // Ordena las misiones según las dimensiones con menos actividad reciente.
+  const recent = Object.values(data.days).slice(-7);
+  const activity = dimensionNames.map((_,i)=>{
+    return recent.reduce((sum,d)=>sum+(d.completedDimensions?.includes(i)?1:0),0);
+  });
+
+  const ranked = [...priorities].sort((a,b)=>activity[a.dimension]-activity[b.dimension]);
+  const offset = Math.max(0,day-1)%ranked.length;
+  const ordered = [...ranked.slice(offset),...ranked.slice(0,offset)];
+
+  return {
+    priorities:ordered.slice(0,3),
+    secondary,
+    special:special[(Math.max(1,day)-1)%special.length]
+  };
+}
+
+function dayRecord(){
+  return data.days[currentDayKey()] || {completed:[],unlocked:0,secondaryDone:[],type:""};
+}
+
+function renderMission(mission,index,kind){
+  const record=dayRecord();
+  const done = kind==="priority"
+    ? record.completed.includes(index)
+    : kind==="secondary"
+      ? record.secondaryDone.includes(index)
+      : record.specialDone===true;
+
+  return `
+    <div class="card mission ${done?"done":""}">
+      <div class="row">
+        <h3>${done?"✓ ":""}${mission.title}</h3>
+        <span class="tag">${mission.duration||"15 min"}</span>
+      </div>
+      <p>${mission.description}</p>
+      <div class="mission-actions">
+        ${done
+          ? `<button class="secondary" onclick="undoMission('${kind}',${index})">Deshacer</button>`
+          : `<button onclick="completeMission('${kind}',${index})">Completar</button>`}
+        ${kind!=="priority" ? "" : `<span class="tag">Prioritaria</span>`}
+      </div>
+    </div>`;
+}
+
+function render(){
+  const day=dayNumber();
+  const safeDay=Math.max(1,Math.min(90,day));
+  const phase=phaseInfo(safeDay);
+  const pool=missionPool(safeDay);
+  const record=dayRecord();
+
+  document.getElementById("dayTitle").textContent=`DÍA ${safeDay} DE 90`;
+  document.getElementById("phase").textContent=`FASE ${safeDay<=30?1:safeDay<=60?2:3} · ${phase.name}`;
+  document.getElementById("dateLabel").textContent=new Date().toLocaleDateString("es-CO",{weekday:"long",day:"numeric",month:"long"});
+  document.getElementById("phaseProgress").textContent=`${safeDay-phase.start+1} / 30`;
+  document.getElementById("dayProgress").style.width=`${safeDay/90*100}%`;
+  document.getElementById("streakValue").textContent=streakCount();
+  document.getElementById("streakBig").textContent=streakCount();
+  document.getElementById("daysValue").textContent=registeredDays();
+  document.getElementById("completedValue").textContent=`${record.completed.length}/3`;
+  document.getElementById("dayStatus").textContent=record.type ? "REGISTRADO" : "EN CURSO";
+  document.getElementById("closeDayButton").disabled=!!record.type;
+  document.getElementById("focusText").textContent=pool.priorities[0].title;
+
+  document.getElementById("priorityMissions").innerHTML=pool.priorities.map((m,i)=>renderMission(m,i,"priority")).join("");
+
+  const unlocked=Math.min(3,record.unlocked||0);
+  document.getElementById("secondaryCount").textContent=`${unlocked} disponibles`;
+  document.getElementById("secondaryMissions").innerHTML=pool.secondary.slice(0,unlocked).map((m,i)=>renderMission(m,i,"secondary")).join("") || `<p class="notice">Aún no hay misiones secundarias desbloqueadas.</p>`;
+  document.getElementById("unlockButton").disabled=unlocked>=3 || !!record.type;
+  document.getElementById("unlockButton").textContent=unlocked>=3?"Todas desbloqueadas":"Desbloquear siguiente misión";
+
+  const specialAvailable=safeDay>=7 && safeDay%7===0;
+  document.getElementById("specialCard").classList.toggle("hidden",!specialAvailable);
+  if(specialAvailable){
+    document.getElementById("specialMission").innerHTML=renderMission(pool.special,0,"special");
+    document.getElementById("specialText").textContent="Una misión especial para salir de tu zona de comodidad. Es opcional.";
+  }
+
+  renderDimensions();
+  renderHistory();
+  renderEvaluations();
+  document.getElementById("startDate").value=data.startDate;
+  document.getElementById("availableTime").value=data.availableTime;
+}
+
+function completeMission(kind,index){
+  const record=dayRecord();
+  if(record.type){alert("Esta jornada ya fue registrada.");return;}
+  if(kind==="priority" && !record.completed.includes(index)) record.completed.push(index);
+  if(kind==="secondary" && !record.secondaryDone.includes(index)) record.secondaryDone.push(index);
+  if(kind==="special") record.specialDone=true;
+  data.days[currentDayKey()]=record;
+  saveData();render();
+}
+
+function undoMission(kind,index){
+  const record=dayRecord();
+  if(record.type){alert("No puedes modificar una jornada ya registrada.");return;}
+  if(kind==="priority") record.completed=record.completed.filter(x=>x!==index);
+  if(kind==="secondary") record.secondaryDone=record.secondaryDone.filter(x=>x!==index);
+  if(kind==="special") record.specialDone=false;
+  data.days[currentDayKey()]=record;
+  saveData();render();
+}
+
+function unlockNext(){
+  const record=dayRecord();
+  if(record.type)return;
+  record.unlocked=Math.min(3,(record.unlocked||0)+1);
+  data.days[currentDayKey()]=record;
+  saveData();render();
+}
+
+function closeDay(){
+  const record=dayRecord();
+  if(record.type){alert("Esta jornada ya está registrada.");return;}
+  if(!confirm("¿Quieres registrar esta jornada tal como fue?"))return;
+  record.type="normal";
+  record.closedAt=new Date().toISOString();
+  data.days[currentDayKey()]=record;
+  saveData();render();
+  document.getElementById("closeMessage").textContent="Jornada registrada. Mañana tendrás una nueva oportunidad de avanzar.";
+}
+
+function recoveryDay(){
+  const record=dayRecord();
+  if(record.type){alert("Esta jornada ya está registrada.");return;}
+  if(!confirm("¿Registrar hoy como día de recuperación?"))return;
+  record.type="recovery";
+  record.closedAt=new Date().toISOString();
+  data.days[currentDayKey()]=record;
+  saveData();render();
+  document.getElementById("closeMessage").textContent="Recuperar también es avanzar. Tu continuidad ha quedado registrada.";
+}
+
+function showPage(id,button){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  button.classList.add("active");
+}
+
+function renderDimensions(){
+  const list=document.getElementById("dimensionsList");
+  list.innerHTML=dimensionNames.map((name,i)=>{
+    const value=data.dimensions[i]?.score;
+    return `<div class="dimension"><span>${name}</span><span class="score">${value===undefined?"Sin evaluar":value+"/100"}</span></div>`;
+  }).join("");
+  document.getElementById("dimensionSelect").innerHTML=dimensionNames.map((name,i)=>`<option value="${i}">${name}</option>`).join("");
+}
+
+function saveDimension(){
+  const i=Number(document.getElementById("dimensionSelect").value);
+  const score=Number(document.getElementById("dimensionScore").value);
+  if(!Number.isFinite(score)||score<0||score>100){alert("Ingresa un valor entre 0 y 100.");return;}
+  data.dimensions[i]={score,note:document.getElementById("dimensionNote").value,date:currentDayKey()};
+  saveData();render();
+  alert("Dimensión actualizada.");
+}
+
+function renderHistory(){
+  const entries=Object.entries(data.days).sort((a,b)=>b[0].localeCompare(a[0]));
+  document.getElementById("historyList").innerHTML=entries.length
+    ? entries.slice(0,20).map(([date,d])=>`<div class="dimension"><span>${date}</span><span>${d.type==="recovery"?"Recuperación":"Jornada registrada"} · ${d.completed?.length||0}/3 prioritarias</span></div>`).join("")
+    : "Todavía no hay jornadas registradas.";
+}
+
+function evaluationScore(){
+  const h=Number(document.getElementById("evHabits").value);
+  const s=Number(document.getElementById("evStreak").value);
+  const m=Number(document.getElementById("evMissions").value);
+  const r=Number(document.getElementById("evResults").value);
+  const a=Number(document.getElementById("evSelf").value);
+  return h*.25+s*.20+m*.15+r*.30+a*.10;
+}
+
+function evaluationLevel(score){
+  if(score<20)return "CRÍTICO";
+  if(score<40)return "INICIAL";
+  if(score<60)return "EN DESARROLLO";
+  if(score<80)return "SÓLIDO";
+  return "FORTALECIDO";
+}
+
+function updateEvaluationPreview(){
+  const score=evaluationScore();
+  document.getElementById("evaluationResult").textContent=score.toFixed(1);
+  document.getElementById("evaluationLevel").textContent=evaluationLevel(score);
+}
+
+["evHabits","evStreak","evMissions","evResults","evSelf"].forEach(id=>{
+  document.getElementById(id).addEventListener("input",updateEvaluationPreview);
+});
+
+function saveEvaluation(){
+  const fields=["evHabits","evStreak","evMissions","evResults","evSelf"];
+  const values=fields.map(id=>Number(document.getElementById(id).value));
+  if(values.some(v=>!Number.isFinite(v)||v<0||v>100)){alert("Todos los valores deben estar entre 0 y 100.");return;}
+  const score=evaluationScore();
+  data.evaluations.push({
+    stage:Number(document.getElementById("evaluationStage").value),
+    date:currentDayKey(),
+    score,
+    level:evaluationLevel(score),
+    confidence:document.getElementById("evConfidence").value,
+    evidence:document.getElementById("evEvidence").value,
+    values
+  });
+  saveData();renderEvaluations();
+  alert("Evaluación guardada.");
+}
+
+function renderEvaluations(){
+  const el=document.getElementById("evaluationHistory");
+  el.innerHTML=data.evaluations.length
+    ? [...data.evaluations].reverse().map(e=>`<div class="dimension"><span>Día ${e.stage} · ${e.date}<br><small class="muted">${e.confidence} confianza</small></span><strong>${e.score.toFixed(1)} · ${e.level}</strong></div>`).join("")
+    : "Aún no hay evaluaciones guardadas.";
+}
+
+const noScrollItems=[
+  {title:"Una idea para pensar",body:"No confundas estar ocupado con estar avanzando. Pregúntate qué acción concreta de hoy tendrá valor dentro de un mes.",category:"REFLEXIÓN"},
+  {title:"Aprendizaje activo",body:"Elige un tema que quieras dominar. Dedica unos minutos a estudiarlo y después intenta explicarlo sin consultar tus apuntes.",category:"APRENDIZAJE"},
+  {title:"Conoce tus hábitos",body:"Identifica una conducta que te roba tiempo. No necesitas cambiar toda tu vida hoy: empieza por reconocer cuándo aparece.",category:"AUTOCONOCIMIENTO"},
+  {title:"Una acción pequeña",body:"Elige una tarea que llevas posponiendo. Divídela en un primer paso que puedas completar en menos de diez minutos.",category:"ACCIÓN"}
+];
+
+function startNoScroll(){
+  noScrollActive=true;
+  noScrollIndex=0;
+  if(noScrollTimer)clearTimeout(noScrollTimer);
+  showNoScrollItem();
+  document.getElementById("noScrollStatus").textContent="Sesión iniciada. Duración objetivo: 15 minutos.";
+  noScrollTimer=setTimeout(()=>finishNoScroll(),15*60*1000);
+}
+
+function showNoScrollItem(){
+  const item=noScrollItems[noScrollIndex%noScrollItems.length];
+  document.getElementById("noScrollContent").innerHTML=`
+    <div class="card no-scroll-card">
+      <span class="tag">${item.category}</span>
+      <div><h2>${item.title}</h2><p class="muted">${item.body}</p></div>
+      <div class="small muted">CONTENIDO ${noScrollIndex+1}</div>
+    </div>`;
+}
+
+function nextNoScroll(){
+  if(!noScrollActive){alert("Primero inicia tu sesión.");return;}
+  noScrollIndex++;
+  showNoScrollItem();
+}
+
+function finishNoScroll(){
+  if(!noScrollActive)return;
+  noScrollActive=false;
+  if(noScrollTimer)clearTimeout(noScrollTimer);
+  data.noScrollSessions++;
+  saveData();
+  document.getElementById("noScrollContent").innerHTML="";
+  document.getElementById("noScrollStatus").textContent="Sesión finalizada. Sesiones realizadas: "+data.noScrollSessions;
+}
+
+function saveSettings(){
+  const date=document.getElementById("startDate").value;
+  if(!date){alert("Selecciona una fecha de inicio.");return;}
+  data.startDate=date;
+  data.availableTime=Number(document.getElementById("availableTime").value);
+  saveData();render();
+  alert("Configuración guardada.");
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="prime-quest-backup.json";a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(){
+  const file=document.getElementById("importFile").files[0];
+  if(!file){alert("Selecciona un archivo JSON.");return;}
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const imported=JSON.parse(reader.result);
+      if(!imported.startDate||!imported.days||!imported.dimensions)throw new Error();
+      if(!confirm("¿Reemplazar los datos actuales por esta copia?"))return;
+      data={...structuredClone(initialData),...imported};
+      saveData();render();
+      alert("Copia restaurada.");
+    }catch(e){alert("El archivo no parece ser una copia válida de PRIME QUEST.");}
+  };
+  reader.readAsText(file);
+}
+
+function resetData(){
+  if(!confirm("¿Seguro que quieres borrar todo tu progreso?"))return;
+  if(!confirm("Esta acción no se puede deshacer. ¿Continuar?"))return;
+  localStorage.removeItem(STORAGE_KEY);
+  data=structuredClone(initialData);
+  saveData();render();
+}
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  });
+}
+
 render();
-if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
-</script></body></html>
+updateEvaluationPreview();
+</script>
+</body>
+</html>
